@@ -123,13 +123,13 @@ int main(void)
 	//PRINT_SIDEWALK_VERSION();
 
 
-    
 
     // if (!device_is_ready(uart0)){
     //     printk("UART0 device not ready\r\n");
     //     return 1 ;
     // }
     // else{
+        
 
     //     printk("UART0 device ready\r\n");
     // }
