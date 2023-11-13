@@ -120,7 +120,7 @@ static void app_setup(void)
 
 int main(void)
 {
-	PRINT_SIDEWALK_VERSION();
+	//PRINT_SIDEWALK_VERSION();
 
     // if (!device_is_ready(uart0)){
     //     printk("UART0 device not ready\r\n");
