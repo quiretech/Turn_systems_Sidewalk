@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/mcuboot/modules/nrf/subsys/net/lib/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/mcuboot/modules/nrf/subsys/net/lib/cmake_install.cmake")
 
 endif()
 

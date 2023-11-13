@@ -1,6 +1,6 @@
 {
     "format-version": 0,
-    "time": 1699907331,
+    "time": 1699912925,
     "files": [
         {
             "load_address": 29184,
@@ -8,15 +8,15 @@
             "type": "application",
             "board": "nrf52840dk_nrf52840",
             "soc": "nRF52840_QIAA",
-            "size": 390787,
+            "size": 390714,
             "file": "app_update.bin",
-            "modtime": 1699907331
+            "modtime": 1699912925
         }
     ],
     "name": "template_ble",
     "firmware": {
         "zephyr": {
-            "revision": "9a2e912e703625f11b73889678bfdf1792f3c266-dirty"
+            "revision": "d80a5d503d59611c744cf6196ba3eb01a2aca8fc-dirty"
         },
         "nrf": {
             "revision": "1fae141fc6713dd331b797fc96c90dc84552242d"

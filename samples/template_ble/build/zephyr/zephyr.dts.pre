@@ -1168,7 +1168,7 @@ zephyr_udc0: &usbd {
  status = "okay";
 };
 # 0 "<command-line>" 2
-# 1 "C:/ncs/v2.5.0/sidewalk/samples/template_ble/boards/nrf52840dk_nrf52840.overlay" 1
+# 1 "C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/boards/nrf52840dk_nrf52840.overlay" 1
 
 
 

@@ -39,16 +39,16 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/subsys/nrf_security/src/drivers/nrf_cc3xx_platform/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/subsys/nrf_security/src/drivers/nrf_cc3xx_platform/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/subsys/nrf_security/src/drivers/zephyr/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/subsys/nrf_security/src/drivers/zephyr/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/subsys/nrf_security/src/drivers/nrf_oberon/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/subsys/nrf_security/src/drivers/nrf_oberon/cmake_install.cmake")
 endif()
 

@@ -41,7 +41,7 @@
 #endif
 
 #include <zephyr/drivers/uart.h>
-const struct device *uart0= DEVICE_DT_GET(DT_NODELABEL(uart0));
+//const struct device *uart0= DEVICE_DT_GET(DT_NODELABEL(uart0));
 const struct device *uart1= DEVICE_DT_GET(DT_NODELABEL(uart1));
 
 LOG_MODULE_REGISTER(main, CONFIG_SIDEWALK_LOG_LEVEL);
@@ -122,14 +122,14 @@ int main(void)
 {
 	PRINT_SIDEWALK_VERSION();
 
-    if (!device_is_ready(uart0)){
-        printk("UART0 device not ready\r\n");
-        return 1 ;
-    }
-    else{
+    // if (!device_is_ready(uart0)){
+    //     printk("UART0 device not ready\r\n");
+    //     return 1 ;
+    // }
+    // else{
 
-        printk("UART0 device ready\r\n");
-    }
+    //     printk("UART0 device ready\r\n");
+    // }
 
     if (!device_is_ready(uart1)){
         printk("UART1 device not ready\r\n");

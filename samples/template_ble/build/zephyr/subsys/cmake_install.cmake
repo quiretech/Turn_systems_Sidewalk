@@ -39,116 +39,116 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/canbus/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/canbus/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/debug/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/debug/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/fb/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/fb/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/fs/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/fs/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/ipc/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/ipc/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/logging/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/logging/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/mgmt/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/mgmt/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/modbus/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/modbus/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/pm/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/pm/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/portability/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/portability/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/random/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/random/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/rtio/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/rtio/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/sd/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/sd/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/stats/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/stats/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/storage/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/storage/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/task_wdt/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/task_wdt/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/testsuite/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/testsuite/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/tracing/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/tracing/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/usb/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/usb/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/bluetooth/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/bluetooth/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/dfu/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/dfu/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/net/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/net/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/zephyr/subsys/settings/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/subsys/settings/cmake_install.cmake")
 endif()
 

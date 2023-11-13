@@ -1,4 +1,9 @@
 C:\ncs\toolchains\ffa23e2f3e\opt\zephyr-sdk\cmake\zephyr\Kconfig
+C:\ncs\v2.5.0\Turn_systems_Sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.dts
+C:\ncs\v2.5.0\Turn_systems_Sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.modules
+C:\ncs\v2.5.0\Turn_systems_Sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.shield
+C:\ncs\v2.5.0\Turn_systems_Sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.shield.defconfig
+C:\ncs\v2.5.0\Turn_systems_Sidewalk\samples\template_ble\child_image\mcuboot\Kconfig.root
 C:\ncs\v2.5.0\bootloader\mcuboot\boot\zephyr\Kconfig
 C:\ncs\v2.5.0\bootloader\mcuboot\boot\zephyr\Kconfig.serial_recovery
 C:\ncs\v2.5.0\bootloader\mcuboot\boot\zephyr\VERSION
@@ -313,11 +318,6 @@ C:\ncs\v2.5.0\nrfxlib\zboss\Kconfig
 C:\ncs\v2.5.0\sidewalk\Kconfig
 C:\ncs\v2.5.0\sidewalk\Kconfig.dependencies
 C:\ncs\v2.5.0\sidewalk\samples\common\Kconfig.mcuboot.defaults
-C:\ncs\v2.5.0\sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.dts
-C:\ncs\v2.5.0\sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.modules
-C:\ncs\v2.5.0\sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.shield
-C:\ncs\v2.5.0\sidewalk\samples\template_ble\build\mcuboot\Kconfig\Kconfig.shield.defconfig
-C:\ncs\v2.5.0\sidewalk\samples\template_ble\child_image\mcuboot\Kconfig.root
 C:\ncs\v2.5.0\sidewalk\utils\Kconfig
 C:\ncs\v2.5.0\zephyr\Kconfig.zephyr
 C:\ncs\v2.5.0\zephyr\arch\Kconfig

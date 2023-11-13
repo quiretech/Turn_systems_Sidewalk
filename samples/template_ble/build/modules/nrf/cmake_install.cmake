@@ -39,36 +39,36 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/ext/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/ext/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/lib/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/lib/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/samples/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/samples/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/subsys/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/subsys/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/modules/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/modules/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/drivers/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/drivers/cmake_install.cmake")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/ncs/v2.5.0/sidewalk/samples/template_ble/build/modules/nrf/tests/cmake_install.cmake")
+  include("C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/modules/nrf/tests/cmake_install.cmake")
 endif()
 

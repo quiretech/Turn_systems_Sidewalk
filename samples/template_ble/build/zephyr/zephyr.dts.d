@@ -20,4 +20,4 @@ empty_file.o: C:/ncs/v2.5.0/zephyr/misc/empty_file.c \
  C:/ncs/v2.5.0/zephyr/dts/arm/nordic/override.dtsi \
  C:/ncs/v2.5.0/zephyr/boards/arm/nrf52840dk_nrf52840/nrf52840dk_nrf52840-pinctrl.dtsi \
  C:/ncs/v2.5.0/zephyr/include/zephyr/dt-bindings/input/input-event-codes.h \
- C:/ncs/v2.5.0/sidewalk/samples/template_ble/boards/nrf52840dk_nrf52840.overlay
+ C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/boards/nrf52840dk_nrf52840.overlay

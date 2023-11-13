@@ -1057,7 +1057,7 @@ rule C_STATIC_LIBRARY_LINKER__kernel_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\ncs\toolchains\ffa23e2f3e\opt\bin\cmake.exe --regenerate-during-build -SC:\ncs\v2.5.0\sidewalk\samples\template_ble -BC:\ncs\v2.5.0\sidewalk\samples\template_ble\build
+  command = C:\ncs\toolchains\ffa23e2f3e\opt\bin\cmake.exe --regenerate-during-build -SC:\ncs\v2.5.0\Turn_systems_Sidewalk\samples\template_ble -BC:\ncs\v2.5.0\Turn_systems_Sidewalk\samples\template_ble\build
   description = Re-running CMake...
   generator = 1
 

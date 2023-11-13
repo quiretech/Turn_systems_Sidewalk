@@ -40,7 +40,7 @@
 	ITEM("modules/tee/tf-m/trusted-firmware-m", "v1.8.0-ncs1", 0)\
 	ITEM("modules/lib/matter", "v2.5.0", 0)\
 	ITEM("modules/lib/cjson", "c6af068", 0)\
-	ITEM("sidewalk", "v2.5.0", 1)\
+	ITEM("sidewalk", "v2.5.0-dirty", 1)\
 	ITEM("modules/lib/azure-sdk-for-c", "308c171c", 0)\
 	ITEM("modules/hal/cirrus-logic", "9f6b381", 0)\
 	ITEM("modules/lib/openthread", "57ef721ee", 0)\
@@ -87,5 +87,5 @@ const char * const sidewalk_version_component[] = {SIDEWALK_VERSION_COMPONENTS};
 
 const size_t sidewalk_version_component_count = sizeof(sidewalk_version_component)/sizeof(*sidewalk_version_component);
 const char * const sidewalk_version_common_commit = "0000000000000000000000000000000000000000";
-const char * const build_time_stamp = "2023-11-13 20:20:19.846639+00:00";
+const char * const build_time_stamp = "2023-11-13 22:00:13.294749+00:00";
 
