@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+ 
+/*
+* Flash partition for the Sidewalk MFG storage.
+*/
+&flash0 {
+	partitions {
+		sidewalk_storage: partition@f8000 {
+			label = "sidewalk_storage";
+			reg = <0x000f8000 0x00007000>;
+		};
+	};
+};

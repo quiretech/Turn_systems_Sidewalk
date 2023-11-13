@@ -1,0 +1,12 @@
+.DS_Store
+.idea
+.flake8
+EdgeDeviceProvisioning/DeviceProfile_*/
+**.env
+*env/
+**/__pycache__
+**/public
+**/node_modules
+ApplicationServerDeployment/policies/DeployStackPolicy.json
+ApplicationServerDeployment/policies/DeployGrafanaPolicy.json
+ApplicationServerDeployment/lambda/authLibs/*

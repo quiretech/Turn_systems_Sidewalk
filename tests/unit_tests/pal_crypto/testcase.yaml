@@ -1,0 +1,6 @@
+tests:
+  sidewalk.unit_tests.crypto:
+    tags: Sidewalk
+    platform_allow: native_posix
+    integration_platforms:
+      - native_posix
