@@ -381,8 +381,7 @@ static void system_timer_cb(struct k_timer *timer_id)
     {
         uhf_counter = 0;
         ret = single_poll();
-        //cup_in = true;
-        
+        //cup_in = true;        
     }
 
     
