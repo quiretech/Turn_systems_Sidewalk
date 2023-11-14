@@ -1168,21 +1168,196 @@ zephyr_udc0: &usbd {
  status = "okay";
 };
 # 0 "<command-line>" 2
-# 1 "C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/boards/nrf52840dk_nrf52840.overlay" 1
+# 1 "c:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/boards/nrf52840dk_nrf52840.overlay" 1
 
 
 
+
+
+
+ &pinctrl {
+    i2s0_default_alt: i2s0_default_alt {
+  group1 {
+   psels = <((((((1) * 32U) + (03)) & 0x7FU) << 0U) | ((13U & 0xFFFFU) << 16U))>,
+    <((((((1) * 32U) + (07)) & 0x7FU) << 0U) | ((15U & 0xFFFFU) << 16U))>,
+    <((((((0) * 32U) + (27)) & 0x7FU) << 0U) | ((18U & 0xFFFFU) << 16U))>,
+    <((((((1) * 32U) + (04)) & 0x7FU) << 0U) | ((17U & 0xFFFFU) << 16U))>;
+  };
+ };
+
+    uart0_default: uart0_default {
+  group1 {
+   psels = <((((((0) * 32U) + (23)) & 0x7FU) << 0U) | ((0U & 0xFFFFU) << 16U))>,
+     <((((((0) * 32U) + (20)) & 0x7FU) << 0U) | ((1U & 0xFFFFU) << 16U))>;
+  };
+
+        group2 {
+
+  };
+ };
+
+ uart0_sleep: uart0_sleep {
+  group1 {
+   psels = <((((((0) * 32U) + (23)) & 0x7FU) << 0U) | ((0U & 0xFFFFU) << 16U))>,
+     <((((((0) * 32U) + (20)) & 0x7FU) << 0U) | ((1U & 0xFFFFU) << 16U))>;
+   low-power-enable;
+  };
+
+ };
+
+
+    uart1_default: uart1_default {
+  group1 {
+   psels = <((((((1) * 32U) + (8)) & 0x7FU) << 0U) | ((1U & 0xFFFFU) << 16U))>;
+   bias-pull-up;
+  };
+  group2 {
+   psels = <((((((1) * 32U) + (2)) & 0x7FU) << 0U) | ((0U & 0xFFFFU) << 16U))>;
+  };
+ };
+
+ uart1_sleep: uart1_sleep {
+  group1 {
+   psels = <((((((1) * 32U) + (8)) & 0x7FU) << 0U) | ((1U & 0xFFFFU) << 16U))>,
+    <((((((1) * 32U) + (2)) & 0x7FU) << 0U) | ((0U & 0xFFFFU) << 16U))>;
+   low-power-enable;
+  };
+ };
+
+    pwm0_default: pwm0_default {
+  group1 {
+   psels = <((((((0) * 32U) + (17)) & 0x7FU) << 0U) | ((22U & 0xFFFFU) << 16U))>;
+   nordic,invert;
+  };
+ };
+
+ pwm0_sleep: pwm0_sleep {
+  group1 {
+   psels = <((((((0) * 32U) + (17)) & 0x7FU) << 0U) | ((22U & 0xFFFFU) << 16U))>;
+   low-power-enable;
+  };
+ };
+ };
+
+ / {
+    zephyr,user {
+        io-channels = <&adc 2>, <&adc 1>;
+    };
+
+    gpiocustom_in {
+        compatible = "gpio-keys";
+
+        doorOPEN: door_OPEN {
+            status = "okay";
+            gpios = <&gpio0 22 ((0 << 0) | (1 << 5))>;
+            label = "Lid door open Hall sensor";
+
+        };
+    };
+
+    aliases {
+        dooropen = &doorOPEN;
+
+    };
+
+};
 
 
 
 &mx25r64 {
  status = "disabled";
 };
-&uart0{
-    status = "okay";
+
+&adc {
+ #address-cells = <1>;
+ #size-cells = <0>;
+
+ channel@2 {
+  reg = <2>;
+  zephyr,gain = "ADC_GAIN_1_6";
+  zephyr,reference = "ADC_REF_INTERNAL";
+  zephyr,acquisition-time = <0>;
+  zephyr,input-positive = <2>;
+  zephyr,resolution = <10>;
+ };
+
+ channel@1 {
+  reg = <1>;
+  zephyr,gain = "ADC_GAIN_1_6";
+  zephyr,reference = "ADC_REF_INTERNAL";
+  zephyr,acquisition-time = <0>;
+  zephyr,input-positive = <3>;
+  zephyr,resolution = <10>;
+ };
+
 };
-&uart1{
-    status = "okay";
+
+
+&uart0 {
+ compatible = "nordic,nrf-uarte";
+ status = "okay";
+ current-speed = <9600>;
+ pinctrl-0 = <&uart0_default>;
+ pinctrl-1 = <&uart0_sleep>;
+ pinctrl-names = "default", "sleep";
+};
+
+&uart1 {
+ compatible = "nordic,nrf-uarte";
+ status = "okay";
+ current-speed = <38400>;
+ pinctrl-0 = <&uart1_default>;
+ pinctrl-1 = <&uart1_sleep>;
+ pinctrl-names = "default", "sleep";
+};
+
+i2s_tx: &i2s0 {
+ status = "okay";
+ pinctrl-0 = <&i2s0_default_alt>;
+ pinctrl-names = "default";
+};
+
+&spi1 {
+ status = "disabled";
+};
+
+&spi3{
+ status = "disabled";
+};
+
+&i2c0 {
+ compatible = "nordic,nrf-twi";
+ status = "disabled";
+ pinctrl-0 = <&i2c0_default>;
+ pinctrl-1 = <&i2c0_sleep>;
+ pinctrl-names = "default", "sleep";
+};
+
+&qspi {
+ status = "disabled";
+ pinctrl-0 = <&qspi_default>;
+ pinctrl-1 = <&qspi_sleep>;
+ pinctrl-names = "default", "sleep";
+ mx25r64: mx25r6435f@0 {
+  compatible = "nordic,qspi-nor";
+  reg = <0>;
+
+  writeoc = "pp4io";
+
+  readoc = "read4io";
+  sck-frequency = <8000000>;
+  jedec-id = [c2 28 17];
+  sfdp-bfp = [
+   e5 20 f1 ff ff ff ff 03 44 eb 08 6b 08 3b 04 bb
+   ee ff ff ff ff ff 00 ff ff ff 00 ff 0c 20 0f 52
+   10 d8 00 ff 23 72 f5 00 82 ed 04 cc 44 83 68 44
+   30 b0 30 b0 f7 c4 d5 5c 00 be 29 ff f0 d0 ff ff
+  ];
+  size = <67108864>;
+  has-dpd;
+  t-enter-dpd = <10000>;
+  t-exit-dpd = <35000>;
+ };
 };
 # 0 "<command-line>" 2
 # 1 "C:/ncs/v2.5.0/zephyr/misc/empty_file.c"

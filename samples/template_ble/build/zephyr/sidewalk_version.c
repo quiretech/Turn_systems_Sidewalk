@@ -87,5 +87,5 @@ const char * const sidewalk_version_component[] = {SIDEWALK_VERSION_COMPONENTS};
 
 const size_t sidewalk_version_component_count = sizeof(sidewalk_version_component)/sizeof(*sidewalk_version_component);
 const char * const sidewalk_version_common_commit = "0000000000000000000000000000000000000000";
-const char * const build_time_stamp = "2023-11-13 22:00:13.294749+00:00";
+const char * const build_time_stamp = "2023-11-14 03:43:25.999711+00:00";
 

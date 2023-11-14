@@ -20,6 +20,9 @@ APPLICATION_BINARY_DIR:PATH=C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template
 //Application Source Directory
 APPLICATION_SOURCE_DIR:PATH=C:/ncs/v2.5.0/bootloader/mcuboot/boot/zephyr
 
+//Selected board
+BOARD:STRING=nrf52840dk_nrf52840
+
 //Support board extensions
 BOARD_EXTENSIONS:BOOL=ON
 
@@ -117,8 +120,8 @@ CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 //Flags used by the CXX compiler during RELWITHDEBINFO builds.
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
-//C compiler
-CMAKE_C_COMPILER:STRING=C:/ncs/toolchains/ffa23e2f3e/opt/zephyr-sdk/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe
+//Path to a program.
+CMAKE_C_COMPILER:FILEPATH=C:/ncs/toolchains/ffa23e2f3e/opt/zephyr-sdk/arm-zephyr-eabi/bin/arm-zephyr-eabi-gcc.exe
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler
@@ -378,8 +381,6 @@ Zephyr_DIR:PATH=C:/ncs/v2.5.0/zephyr/share/zephyr-package/cmake
 //The application configuration folder
 APPLICATION_CONFIG_DIR:INTERNAL=C:/ncs/v2.5.0/bootloader/mcuboot/boot/zephyr
 //NCS child image controlled
-BOARD:INTERNAL=nrf52840dk_nrf52840
-//NCS child image controlled
 BOARD_DIR:INTERNAL=C:/ncs/v2.5.0/zephyr/boards/arm/nrf52840dk_nrf52840
 //DT bindings root directories
 CACHED_DTS_ROOT_BINDINGS:INTERNAL=C:/ncs/v2.5.0/nrf/dts/bindings;C:/ncs/v2.5.0/zephyr/dts/bindings
@@ -437,8 +438,6 @@ CMAKE_CXX_FLAGS_MINSIZEREL-ADVANCED:INTERNAL=1
 CMAKE_CXX_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_CXX_FLAGS_RELWITHDEBINFO
 CMAKE_CXX_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: CMAKE_C_COMPILER
-CMAKE_C_COMPILER-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_COMPILER_AR
 CMAKE_C_COMPILER_AR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_C_COMPILER_RANLIB

@@ -211,6 +211,9 @@ C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/us
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/usb/CMakeFiles/rebuild_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/usb_c/CMakeFiles/edit_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/usb_c/CMakeFiles/rebuild_cache.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/adc/CMakeFiles/drivers__adc.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/adc/CMakeFiles/edit_cache.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/adc/CMakeFiles/rebuild_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/clock_control/CMakeFiles/drivers__clock_control.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/clock_control/CMakeFiles/edit_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/clock_control/CMakeFiles/rebuild_cache.dir
@@ -226,9 +229,15 @@ C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/fl
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/gpio/CMakeFiles/drivers__gpio.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/gpio/CMakeFiles/edit_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/gpio/CMakeFiles/rebuild_cache.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/i2s/CMakeFiles/drivers__i2s.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/i2s/CMakeFiles/edit_cache.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/i2s/CMakeFiles/rebuild_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/pinctrl/CMakeFiles/edit_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/pinctrl/CMakeFiles/drivers__pinctrl.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/pinctrl/CMakeFiles/rebuild_cache.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/pwm/CMakeFiles/drivers__pwm.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/pwm/CMakeFiles/edit_cache.dir
+C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/pwm/CMakeFiles/rebuild_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/serial/CMakeFiles/drivers__serial.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/serial/CMakeFiles/edit_cache.dir
 C:/ncs/v2.5.0/Turn_systems_Sidewalk/samples/template_ble/build/zephyr/drivers/serial/CMakeFiles/rebuild_cache.dir

@@ -10,6 +10,8 @@
 
 #define Z_SYSCALL_DRIVER_GPIO(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, gpio, GPIO)
 
+#define Z_SYSCALL_DRIVER_PWM(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, pwm, PWM)
+
 #define Z_SYSCALL_DRIVER_UART(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, uart, UART)
 
 #define Z_SYSCALL_DRIVER_CRYPTO(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, crypto, CRYPTO)
@@ -73,8 +75,6 @@
 #define Z_SYSCALL_DRIVER_PS2(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, ps2, PS2)
 
 #define Z_SYSCALL_DRIVER_PTP_CLOCK(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, ptp_clock, PTP_CLOCK)
-
-#define Z_SYSCALL_DRIVER_PWM(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, pwm, PWM)
 
 #define Z_SYSCALL_DRIVER_REGULATOR_PARENT(ptr, op) Z_SYSCALL_DRIVER_GEN(ptr, op, regulator_parent, REGULATOR_PARENT)
 

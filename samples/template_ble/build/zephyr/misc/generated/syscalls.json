@@ -129,6 +129,30 @@
     ],
     [
         [
+            "int adc_channel_setup",
+            "const struct device *dev,\n\t\t\t\tconst struct adc_channel_cfg *channel_cfg"
+        ],
+        "adc.h",
+        true
+    ],
+    [
+        [
+            "int adc_read",
+            "const struct device *dev,\n\t\t       const struct adc_sequence *sequence"
+        ],
+        "adc.h",
+        true
+    ],
+    [
+        [
+            "int adc_read_async",
+            "const struct device *dev,\n\t\t\t     const struct adc_sequence *sequence,\n\t\t\t     struct k_poll_signal *async"
+        ],
+        "adc.h",
+        true
+    ],
+    [
+        [
             "int entropy_get_entropy",
             "const struct device *dev,\n\t\t\t\t  uint8_t *buffer,\n\t\t\t\t  uint16_t length"
         ],
@@ -301,6 +325,78 @@
             "const struct device *dev"
         ],
         "gpio.h",
+        true
+    ],
+    [
+        [
+            "int i2s_configure",
+            "const struct device *dev, enum i2s_dir dir,\n\t\t\t    const struct i2s_config *cfg"
+        ],
+        "i2s.h",
+        true
+    ],
+    [
+        [
+            "int i2s_buf_read",
+            "const struct device *dev, void *buf, size_t *size"
+        ],
+        "i2s.h",
+        true
+    ],
+    [
+        [
+            "int i2s_buf_write",
+            "const struct device *dev, void *buf, size_t size"
+        ],
+        "i2s.h",
+        true
+    ],
+    [
+        [
+            "int i2s_trigger",
+            "const struct device *dev, enum i2s_dir dir,\n\t\t\t  enum i2s_trigger_cmd cmd"
+        ],
+        "i2s.h",
+        true
+    ],
+    [
+        [
+            "int pwm_set_cycles",
+            "const struct device *dev, uint32_t channel,\n\t\t\t     uint32_t period, uint32_t pulse,\n\t\t\t     pwm_flags_t flags"
+        ],
+        "pwm.h",
+        true
+    ],
+    [
+        [
+            "int pwm_get_cycles_per_sec",
+            "const struct device *dev, uint32_t channel,\n\t\t\t\t     uint64_t *cycles"
+        ],
+        "pwm.h",
+        true
+    ],
+    [
+        [
+            "int pwm_enable_capture",
+            "const struct device *dev, uint32_t channel"
+        ],
+        "pwm.h",
+        true
+    ],
+    [
+        [
+            "int pwm_disable_capture",
+            "const struct device *dev, uint32_t channel"
+        ],
+        "pwm.h",
+        true
+    ],
+    [
+        [
+            "int pwm_capture_cycles",
+            "const struct device *dev, uint32_t channel,\n\t\t\t\t pwm_flags_t flags, uint32_t *period,\n\t\t\t\t uint32_t *pulse, k_timeout_t timeout"
+        ],
+        "pwm.h",
         true
     ],
     [
@@ -1313,30 +1409,6 @@
     ],
     [
         [
-            "int adc_channel_setup",
-            "const struct device *dev,\n\t\t\t\tconst struct adc_channel_cfg *channel_cfg"
-        ],
-        "adc.h",
-        false
-    ],
-    [
-        [
-            "int adc_read",
-            "const struct device *dev,\n\t\t       const struct adc_sequence *sequence"
-        ],
-        "adc.h",
-        false
-    ],
-    [
-        [
-            "int adc_read_async",
-            "const struct device *dev,\n\t\t\t     const struct adc_sequence *sequence,\n\t\t\t     struct k_poll_signal *async"
-        ],
-        "adc.h",
-        false
-    ],
-    [
-        [
             "int auxdisplay_display_on",
             "const struct device *dev"
         ],
@@ -2249,38 +2321,6 @@
     ],
     [
         [
-            "int i2s_configure",
-            "const struct device *dev, enum i2s_dir dir,\n\t\t\t    const struct i2s_config *cfg"
-        ],
-        "i2s.h",
-        false
-    ],
-    [
-        [
-            "int i2s_buf_read",
-            "const struct device *dev, void *buf, size_t *size"
-        ],
-        "i2s.h",
-        false
-    ],
-    [
-        [
-            "int i2s_buf_write",
-            "const struct device *dev, void *buf, size_t size"
-        ],
-        "i2s.h",
-        false
-    ],
-    [
-        [
-            "int i2s_trigger",
-            "const struct device *dev, enum i2s_dir dir,\n\t\t\t  enum i2s_trigger_cmd cmd"
-        ],
-        "i2s.h",
-        false
-    ],
-    [
-        [
             "int i3c_do_ccc",
             "const struct device *dev,\n\t\t\t struct i3c_ccc_payload *payload"
         ],
@@ -2565,46 +2605,6 @@
             "const struct device *dev, struct net_ptp_time *tm"
         ],
         "ptp_clock.h",
-        false
-    ],
-    [
-        [
-            "int pwm_set_cycles",
-            "const struct device *dev, uint32_t channel,\n\t\t\t     uint32_t period, uint32_t pulse,\n\t\t\t     pwm_flags_t flags"
-        ],
-        "pwm.h",
-        false
-    ],
-    [
-        [
-            "int pwm_get_cycles_per_sec",
-            "const struct device *dev, uint32_t channel,\n\t\t\t\t     uint64_t *cycles"
-        ],
-        "pwm.h",
-        false
-    ],
-    [
-        [
-            "int pwm_enable_capture",
-            "const struct device *dev, uint32_t channel"
-        ],
-        "pwm.h",
-        false
-    ],
-    [
-        [
-            "int pwm_disable_capture",
-            "const struct device *dev, uint32_t channel"
-        ],
-        "pwm.h",
-        false
-    ],
-    [
-        [
-            "int pwm_capture_cycles",
-            "const struct device *dev, uint32_t channel,\n\t\t\t\t pwm_flags_t flags, uint32_t *period,\n\t\t\t\t uint32_t *pulse, k_timeout_t timeout"
-        ],
-        "pwm.h",
         false
     ],
     [
