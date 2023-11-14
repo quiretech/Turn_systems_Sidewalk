@@ -380,13 +380,10 @@ static void system_timer_cb(struct k_timer *timer_id)
     if(uhf_counter > 20)
     {
         uhf_counter = 0;
-
         ret = single_poll();    
         
+        
         //cup_in = true; 
-
-
-
     }
 
     
