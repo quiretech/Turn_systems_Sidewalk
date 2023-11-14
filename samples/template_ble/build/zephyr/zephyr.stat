@@ -57,7 +57,7 @@ Section Headers:
   [33] .debug_aranges    PROGBITS        00000000 063c68 005c60 00      0   0  8
   [34] .debug_info       PROGBITS        00000000 0698c8 3080a5 00      0   0  1
   [35] .debug_abbrev     PROGBITS        00000000 37196d 031733 00      0   0  1
-  [36] .debug_line       PROGBITS        00000000 3a30a0 097da8 00      0   0  1
+  [36] .debug_line       PROGBITS        00000000 3a30a0 097da6 00      0   0  1
   [37] .debug_frame      PROGBITS        00000000 43ae48 0117dc 00      0   0  4
   [38] .debug_str        PROGBITS        00000000 44c624 031c2b 01  MS  0   0  1
   [39] .debug_loc        PROGBITS        00000000 47e24f 0e90e6 00      0   0  1
