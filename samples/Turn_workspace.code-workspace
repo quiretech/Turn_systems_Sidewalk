@@ -3,5 +3,13 @@
         {
             "path": "template_ble"
         }
-    ]
+    ],
+    "settings": {
+        "files.associations": {
+            "board_events.h": "c",
+            "application_thread.h": "c",
+            "device.h": "c",
+            "app_ble_config.h": "c"
+        }
+    }
 }

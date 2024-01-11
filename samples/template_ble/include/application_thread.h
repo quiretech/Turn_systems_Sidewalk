@@ -8,6 +8,7 @@
 #define APPLICATION_THREAD_H
 
 #include <sid_api.h>
+#include <u_app_turn.h>
 
 #ifdef CONFIG_SIDEWALK_LINK_MASK_BLE
 #define BUILT_IN_LM (uint32_t)(SID_LINK_TYPE_1)
@@ -52,6 +53,11 @@ void app_event_send(app_event_t event);
  *
  * @return SID_ERROR_NULL_POINTER in case of invalid ctx
  */
+
+#if defined(CONFIG_TURN_APP)
+sid_error_t app_thread_init(app_ctx_t *ctx, turn_data_packet *data_packet);
+#else
 sid_error_t app_thread_init(app_ctx_t *ctx);
+#endif //#if defined(CONFIG_TURN_APP)
 
 #endif /* APPLICATION_THREAD_H */

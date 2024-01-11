@@ -1,3 +1,5 @@
+#if defined(CONFIG_TURN_APP)
+
 #include <sid_api.h>
 #include <sid_error.h>
 #include <sid_pal_assert_ifc.h>
@@ -35,3 +37,4 @@
 #define EXTERNAL_FLASH DT_CHOSEN(nordic_pm_ext_flash)
 #endif
 
+#endif //#if defined(CONFIG_TURN_APP)

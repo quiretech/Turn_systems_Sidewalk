@@ -1,3 +1,5 @@
+#if defined(CONFIG_TURN_APP)
+
 #include <inttypes.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -115,3 +117,5 @@ int32_t u_adc_batt_volt(void){
     }
 
 }
+
+#endif //#if defined(CONFIG_TURN_APP)

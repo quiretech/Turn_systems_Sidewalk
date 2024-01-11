@@ -1,9 +1,11 @@
+#if defined(CONFIG_TURN_APP)
+
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/i2s.h>
 #include <zephyr/drivers/gpio.h>
 #include <string.h>
-
+#include <u_led_turn.h>
 
 #define I2S_TX_NODE  DT_NODELABEL(i2s_tx)
 const struct device *const i2s_dev_tx = DEVICE_DT_GET(I2S_TX_NODE);
@@ -53,16 +55,19 @@ typedef struct {
 static uint32_t	    m_i2s_led_buffer_tx[NUM_LEDS*4];
 led_t_rgbw          m_led_buffer_tx_rgbw[NUM_LEDS];
 led_t_rgb           *m_led_buffer_tx_rgb;
-uint32_t            leds_data_byte_size;
+uint32_t            leds_data_byte_size = NUM_LEDS*4;
 uint32_t            i2s_leds_frame_word_size;
 uint16_t            num_leds = NUM_LEDS;
 bool                rgb_w = TYPE_RBGW;
 
-uint8_t pepsi_data_set[180][4] = {  {0,0,0,0},{},{},{},{},{0,0,0,100},{},{},{},{},{},{},{0,0,0,100},{},{},{},{},{0,0,50,0},{0,0,50,0},{0,0,50,0},{},{0,0,0,50},{0,0,0,50},{0,0,0,50},{},{50,0,0,0},{50,0,0,0},{50,0,0,0},{},{0,0,0,50},{0,0,0,50},{0,0,0,50},{},{0,0,50,0},{0,0,50,0},{0,0,50,0}, \
-                                    {0,0,0,0},{},{},{},{},{0,0,0,100},{},{},{},{},{},{},{0,0,0,100},{},{},{},{},{},{0,0,50,0},{},{},{0,0,0,50},{},{},{},{50,0,0,0},{},{50,0,0,0},{},{},{},{0,0,0,50},{},{0,0,50,0},{},{0,0,50,0}, \
-                                    {0,0,0,0},{},{},{},{},{0,0,0,100},{},{},{},{},{},{},{0,0,0,100},{},{},{},{},{},{0,0,50,0},{},{},{0,0,0,50},{0,0,0,50},{0,0,0,50},{},{50,0,0,0},{50,0,0,0},{50,0,0,0},{},{},{0,0,0,50},{0,0,0,50},{},{0,0,50,0},{0,0,50,0},{0,0,50,0}, \
-                                    {0,0,0,0},{},{},{},{},{0,0,0,100},{},{},{},{},{},{},{0,0,0,100},{},{},{},{},{},{0,0,50,0},{},{},{},{},{0,0,0,50},{},{},{},{50,0,0,0},{},{},{},{0,0,0,50},{},{},{},{0,0,50,0}, \
-                                    {0,0,0,0},{},{},{},{},{0,0,0,100},{},{},{},{},{},{},{0,0,0,100},{},{},{},{},{0,0,50,0},{0,0,50,0},{0,0,50,0},{},{0,0,0,50},{0,0,0,50},{0,0,0,50},{},{},{},{50,0,0,0},{},{0,0,0,50},{0,0,0,50},{0,0,0,50},{},{},{},{0,0,50,0}};
+uint8_t pepsi_data_set[180][4] = {  {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{0,0,50,0},{0,0,50,0},{0,0,50,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{50,0,0,0},{50,0,0,0},{50,0,0,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{0,0,50,0},{0,0,50,0},{0,0,50,0}, \
+                                    {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{},{0,0,50,0},{},{},{0,0,0,25},{},{},{},{50,0,0,0},{},{50,0,0,0},{},{},{},{0,0,0,25},{},{0,0,50,0},{},{0,0,50,0}, \
+                                    {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{},{0,0,50,0},{},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{50,0,0,0},{50,0,0,0},{50,0,0,0},{},{},{0,0,0,25},{0,0,0,25},{},{0,0,50,0},{0,0,50,0},{0,0,50,0}, \
+                                    {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{},{0,0,50,0},{},{},{},{},{0,0,0,25},{},{},{},{50,0,0,0},{},{},{},{0,0,0,25},{},{},{},{0,0,50,0}, \
+                                    {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{0,0,50,0},{0,0,50,0},{0,0,50,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{},{},{50,0,0,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{},{},{0,0,50,0}};
+
+
+
 
 
 int u_led_init(void)
@@ -166,12 +171,21 @@ void set_i2s_led_data() {
 
 void send_i2s_led_data() {
 
-    int ret;
+    int ret = 0;
+    void *tx_mem_block;
 
-    ret = i2s_write(i2s_dev_tx, m_i2s_led_buffer_tx, (BLOCK_SIZE));
+    k_mem_slab_alloc(&tx_mem_slab, &tx_mem_block, K_NO_WAIT);
+    memcpy(tx_mem_block, m_i2s_led_buffer_tx, BLOCK_SIZE);
+
+
+    //ret = i2s_write(i2s_dev_tx, m_i2s_led_buffer_tx, (BLOCK_SIZE));
+    ret = i2s_write(i2s_dev_tx, tx_mem_block, (BLOCK_SIZE));
     if (ret < 0) {
         printk("Failed to write dataddd: %d\n", ret);
         //break;
+    }
+    else{
+        //printk("Success writing I2S \n");
     }
     ret = i2s_trigger(i2s_dev_tx, I2S_DIR_TX, I2S_TRIGGER_START);
     if (ret < 0) {
@@ -266,7 +280,7 @@ void position_on_range(uint8_t pos1, uint8_t pos2, uint8_t r, uint8_t g, uint8_t
 }
 
 
-void pepsi(void)
+void display_pepsi(void)
 {
     for(int pos = 0; pos<180; pos++)
     {
@@ -278,3 +292,31 @@ void pepsi(void)
     }
     turn_leds_on();
 }
+
+void display_lid_jam(void)
+{
+    for(int pos = 0; pos<180; pos++)
+    {
+        //set_led_pixel_RGBW(i, pepsi_data_set[i][0], pepsi_data_set[i][1], pepsi_data_set[i][2], pepsi_data_set[i][3]);
+        m_led_buffer_tx_rgbw[pos].r = lid_jam_data_set[pos][0];
+        m_led_buffer_tx_rgbw[pos].g = lid_jam_data_set[pos][1];
+        m_led_buffer_tx_rgbw[pos].b = lid_jam_data_set[pos][2];
+        m_led_buffer_tx_rgbw[pos].w = lid_jam_data_set[pos][3];
+    }
+    turn_leds_on();
+}
+
+void display_thanks(void)
+{
+    for(int pos = 0; pos<180; pos++)
+    {
+        //set_led_pixel_RGBW(i, pepsi_data_set[i][0], pepsi_data_set[i][1], pepsi_data_set[i][2], pepsi_data_set[i][3]);
+        m_led_buffer_tx_rgbw[pos].r = thanks_data_set[pos][0];
+        m_led_buffer_tx_rgbw[pos].g = thanks_data_set[pos][1];
+        m_led_buffer_tx_rgbw[pos].b = thanks_data_set[pos][2];
+        m_led_buffer_tx_rgbw[pos].w = thanks_data_set[pos][3];
+    }
+    turn_leds_on();
+}
+
+#endif //#if defined(CONFIG_TURN_APP)

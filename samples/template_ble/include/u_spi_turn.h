@@ -1,0 +1,1 @@
+void u_spi_init(void);

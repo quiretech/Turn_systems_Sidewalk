@@ -8,6 +8,7 @@
 #include <sid_error.h>
 #include <sid_pal_assert_ifc.h>
 #include <app_ble_config.h>
+// #include <app_subGHz_config.h>
 
 #include <stdbool.h>
 #include <zephyr/kernel.h>
@@ -40,18 +41,139 @@
 #define EXTERNAL_FLASH DT_CHOSEN(nordic_pm_ext_flash)
 #endif
 
-#include <zephyr/drivers/uart.h>
-
 #if defined(CONFIG_TURN_APP)
-     #include <u_app_turn.h>
-    // #include <u_turn_config.h>
-    // #include <u_uart_turn.h>
-    // #include <u_adc_turn.h>
+#include <zephyr/drivers/uart.h>
+#include <u_app_turn.h>
+// #include <u_turn_config.h>
+// #include <u_uart_turn.h>
+// #include <u_adc_turn.h>
+
+LOG_MODULE_REGISTER(main, CONFIG_SIDEWALK_LOG_LEVEL);
+
+static app_ctx_t app_context;
+
+static void button_handler(uint32_t event)
+{
+	app_event_send((app_event_t)event);
+}
+
+static sid_error_t app_buttons_init(btn_handler_t handler)
+{
+	button_set_action_long_press(DK_BTN1, handler, BUTTON_EVENT_FACTORY_RESET);
+	button_set_action(DK_BTN2, handler, BUTTON_EVENT_CONNECTION_REQUEST);
+	button_set_action(DK_BTN3, handler, BUTTON_EVENT_SEND_HELLO);
+	button_set_action_short_press(DK_BTN4, handler, BUTTON_EVENT_SET_BATTERY_LEVEL);
+#if defined(CONFIG_SIDEWALK_DFU_SERVICE_BLE)
+	button_set_action_long_press(DK_BTN4, handler, BUTTON_EVENT_NORDIC_DFU);
 #endif
 
+	return buttons_init() ? SID_ERROR_GENERIC : SID_ERROR_NONE;
+}
 
-//const struct device *uart0= DEVICE_DT_GET(DT_NODELABEL(uart0));
-//const struct device *uart1= DEVICE_DT_GET(DT_NODELABEL(uart1));
+static void app_setup(void)
+{
+	if (app_buttons_init(button_handler)) {
+		LOG_ERR("Failed to initialze buttons.");
+		SID_PAL_ASSERT(false);
+	}
+
+	if (dk_leds_init()) {
+		LOG_ERR("Failed to initialze LEDs.");
+		SID_PAL_ASSERT(false);
+	}
+#if defined(CONFIG_GPIO)
+	state_watch_init_gpio(&global_state_notifier);
+#endif
+#if defined(CONFIG_LOG)
+	state_watch_init_log(&global_state_notifier);
+#endif
+
+	if (sidewalk_callbacks_set(&app_context, &app_context.event_callbacks)) {
+		LOG_ERR("Failed to set sidewalk callbacks");
+		SID_PAL_ASSERT(false);
+	}
+
+	app_context.config = (struct sid_config){
+		.link_mask = BUILT_IN_LM,
+		.time_sync_periodicity_seconds = 7200,
+		.callbacks = &app_context.event_callbacks,
+		.link_config = app_get_ble_config(),
+		.sub_ghz_link_config = NULL,
+        //.sub_ghz_link_config = app_get_sub_ghz_config(),
+	};
+
+#if defined(CONFIG_BOOTLOADER_MCUBOOT)
+	if (!boot_is_img_confirmed()) {
+		int ret = boot_write_img_confirmed();
+
+		if (ret) {
+			LOG_ERR("Couldn't confirm image: %d", ret);
+		} else {
+			LOG_INF("Marked image as OK");
+		}
+	}
+#endif
+
+#if defined(CONFIG_NORDIC_QSPI_NOR)
+	const struct device *const qspi_dev = DEVICE_DT_GET(EXTERNAL_FLASH);
+
+	if (device_is_ready(qspi_dev)) {
+		pm_device_action_run(qspi_dev, PM_DEVICE_ACTION_SUSPEND);
+	}
+#endif
+}
+
+int main(void)
+{
+	//PRINT_SIDEWALK_VERSION();
+
+
+
+    // if (!device_is_ready(uart0)){
+    //     printk("UART0 device not ready\r\n");
+    //     return 1 ;
+    // }
+    // else{
+
+
+    //     printk("UART0 device ready\r\n");
+
+    // }
+
+    // if (!device_is_ready(uart1)){
+    //     printk("UART1 device not ready\r\n");
+    //     return 1 ;
+    // }
+    // else{
+
+    //     printk("UART1 device ready\r\n");
+    // }
+
+	switch (application_to_start()) {
+	case SIDEWALK_APPLICATION: {
+		app_setup();
+		if (app_thread_init(&app_context, get_data_packket_pointer())){
+			LOG_ERR("Failed to start Sidewalk thread");
+		}
+		break;
+	};
+#if defined(CONFIG_SIDEWALK_DFU_SERVICE_BLE)
+	case DFU_APPLICATION: {
+		const int ret = nordic_dfu_ble_start();
+		LOG_INF("DFU service started, return value %d", ret);
+		break;
+	}
+#endif
+	default:
+		LOG_ERR("Unknown application to start.");
+	}
+
+	u_app_turn_init();
+    
+	return 0;
+}
+
+#else  //#if not-defined(CONFIG_TURN_APP)
 
 LOG_MODULE_REGISTER(main, CONFIG_SIDEWALK_LOG_LEVEL);
 
@@ -129,34 +251,12 @@ static void app_setup(void)
 
 int main(void)
 {
-	//PRINT_SIDEWALK_VERSION();
-
-
-
-    // if (!device_is_ready(uart0)){
-    //     printk("UART0 device not ready\r\n");
-    //     return 1 ;
-    // }
-    // else{
-
-
-    //     printk("UART0 device ready\r\n");
-
-    // }
-
-    // if (!device_is_ready(uart1)){
-    //     printk("UART1 device not ready\r\n");
-    //     return 1 ;
-    // }
-    // else{
-
-    //     printk("UART1 device ready\r\n");
-    // }
+	PRINT_SIDEWALK_VERSION();
 
 	switch (application_to_start()) {
 	case SIDEWALK_APPLICATION: {
 		app_setup();
-		if (app_thread_init(&app_context)) {
+		if (app_thread_init(&app_context)){
 			LOG_ERR("Failed to start Sidewalk thread");
 		}
 		break;
@@ -172,9 +272,8 @@ int main(void)
 		LOG_ERR("Unknown application to start.");
 	}
 
-#if defined(CONFIG_TURN_APP)
-	u_app_turn_init();
-#endif
-
 	return 0;
 }
+
+
+#endif //#if defined(CONFIG_TURN_APP)

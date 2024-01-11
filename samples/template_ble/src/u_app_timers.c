@@ -21,4 +21,4 @@
 
 
 
-#endif // CONFIG_TURN_APP
+#endif // #if defined(CONFIG_TURN_APP)

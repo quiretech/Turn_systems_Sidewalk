@@ -4,24 +4,57 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+ 
  &pinctrl {
     i2s0_default_alt: i2s0_default_alt {
 		group1 {
-			psels = <NRF_PSEL(I2S_SCK_M, 1, 03)>,
+			psels = <NRF_PSEL(I2S_SCK_M, 1, 05)>,
 				<NRF_PSEL(I2S_LRCK_M, 1, 07)>,
 				<NRF_PSEL(I2S_SDOUT, 0, 27)>,
 				<NRF_PSEL(I2S_SDIN, 1, 04)>;
 		};
 	};
 
+    spi1_default: spi1_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 29)>,
+				<NRF_PSEL(SPIM_MISO, 0, 30)>;
+		};
+	};
+
+	spi1_sleep: spi1_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 13)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 29)>,
+				<NRF_PSEL(SPIM_MISO, 0, 30)>;
+			low-power-enable;
+		};
+	};
+
+    i2c0_default: i2c0_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 7)>,
+				<NRF_PSEL(TWIM_SCL, 0, 19)>;
+		};
+	};
+
+	i2c0_sleep: i2c0_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 7)>,
+				<NRF_PSEL(TWIM_SCL, 0, 19)>;
+			low-power-enable;
+		};
+	};
+
     uart0_default: uart0_default {
 		group1 {
-			psels = <NRF_PSEL(UART_TX, 0, 23)>,
-					<NRF_PSEL(UART_RX, 0, 20)>;
+			psels = <NRF_PSEL(UART_TX, 0, 23)>;
 		};
 
         group2 {
-			
+			psels = <NRF_PSEL(UART_RX, 0, 20)>;
+			bias-pull-down;
 		};
 	};
 
@@ -41,14 +74,14 @@
 			bias-pull-up;
 		};
 		group2 {
-			psels = <NRF_PSEL(UART_TX, 1, 2)>;
+			psels = <NRF_PSEL(UART_TX, 1, 15)>;
 		};
 	};
 
 	uart1_sleep: uart1_sleep {
 		group1 {
 			psels = <NRF_PSEL(UART_RX, 1, 8)>,
-				<NRF_PSEL(UART_TX, 1, 2)>;
+				<NRF_PSEL(UART_TX, 1, 15)>;
 			low-power-enable;
 		};
 	};
@@ -66,13 +99,27 @@
 			low-power-enable;
 		};
 	};
+
+    pwm1_default: pwm1_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT1, 1, 10)>;
+			nordic,invert;
+		};
+	};
+
+	pwm1_sleep: pwm1_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT1, 1, 10)>;
+			low-power-enable;
+		};
+	};
  };
 
  / {
     zephyr,user {
         io-channels = <&adc 2>, <&adc 1>;
     };
-
+    
     gpiocustom_in {
         compatible = "gpio-keys";
        
@@ -80,12 +127,88 @@
             status = "okay";
             gpios = <&gpio0 22 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
             label = "Lid door open Hall sensor";
-
         };
+
+        // modification - IO attached to Pin 0.25 is assiged to esp_INT, 
+        // esp32IO1: esp32_IO1 {
+        //     status = "okay";
+        //     gpios = <&gpio0 25 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+        //     label = "ESP32 Input pin";
+        // };
+
+        // Pin 1.08 is in conflict with UART1_RX, ESP32_int moved to Pin ESP32_IO1
+        esp32INT: esp32_INT {
+            status = "okay";
+            gpios = <&gpio0 25 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+            label = "Interrupt from ESP32 ";
+        };
+        
     };
 
+    gpiocustom_out {
+        compatible = "gpio-keys";
+       
+        irsenEN: ir_sen_EN {
+            status = "okay";
+            gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
+            label = "Enable IR bin full level sensor";
+        };
+
+        nfcRST: nfc_RST {
+            status = "okay";
+            gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+            label = "NFC Reset";
+        };
+
+
+        sol1EN: sol1_EN {
+            status = "okay";
+            gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
+            label = "Solenoide 1 ON/OFF";
+        };
+
+        sol2EN: sol2_EN {
+            status = "okay";
+            gpios = <&gpio0 26 GPIO_ACTIVE_HIGH>;
+            label = "Solenoide 2 ON/OFF";
+        };
+
+        ledEN: led_EN {
+            status = "okay";
+            gpios = <&gpio1 03 GPIO_ACTIVE_HIGH>;
+            label = "Enable LED Ring Power";
+        };
+
+        uhfEN: uhf_EN {
+            status = "okay";
+            gpios = <&gpio0 05 GPIO_ACTIVE_HIGH>;
+            label = "Enable UHF module";
+        };
+        
+        
+    };
+
+    pwmleds {
+		compatible = "pwm-leds";
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm0 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+
+        pwm_led1: pwm_led_1 {
+			pwms = <&pwm1 1 PWM_HZ(2000) PWM_POLARITY_NORMAL>;
+		};
+	};
+
     aliases {
-        dooropen = &doorOPEN;
+        dooropen    = &doorOPEN;
+        uhfen       = &uhfEN;
+        //b1en        = &b1EN;
+        sol1en      = &sol1EN;
+        sol2en      = &sol2EN;
+        leden       = &ledEN;
+        irsenen     = &irsenEN;
+        pwm-led0    = &pwm_led0;
+        pwm-led1    = &pwm_led1;
 
     };
 
@@ -121,11 +244,25 @@
 
 };
 
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm1 {
+	status = "okay";
+	pinctrl-0 = <&pwm1_default>;
+	pinctrl-1 = <&pwm1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
 
 &uart0 {
 	compatible = "nordic,nrf-uarte";
 	status = "okay";
-	current-speed = <9600>;
+	current-speed = <38400>;
 	pinctrl-0 = <&uart0_default>;
 	pinctrl-1 = <&uart0_sleep>;
 	pinctrl-names = "default", "sleep";
@@ -134,7 +271,7 @@
 &uart1 {
 	compatible = "nordic,nrf-uarte";
 	status = "okay";
-	current-speed = <38400>;
+	current-speed = <9600>;
 	pinctrl-0 = <&uart1_default>;
 	pinctrl-1 = <&uart1_sleep>;
 	pinctrl-names = "default", "sleep";
@@ -146,45 +283,77 @@ i2s_tx: &i2s0 {
 	pinctrl-names = "default";
 };
 
-&spi1 {
+&led0 {
+    status = "disabled";
+};
+
+&led1 {
+    status = "disabled";
+};
+
+&button2 {
 	status = "disabled";
 };
 
-&spi3{
+&button3 {
 	status = "disabled";
+};
+
+// my_spi_master: &spi1 {
+// 	compatible = "nordic,nrf-spim";
+// 	/* SPI0 cannot be used together with i2c0. Same Device ID 0x40003000*/
+// 	status = "disabled";
+// 	pinctrl-0 = <&spi1_default>;
+// 	pinctrl-1 = <&spi1_sleep>;
+    
+// 	pinctrl-names = "default", "sleep";
+//     cs-gpios = <&gpio0 31 GPIO_ACTIVE_LOW>;
+// };
+
+&spi0 {
+	status = "disabled";
+};
+
+arduino_spi: &spi3 {
+	status = "disabled";
+	cs-gpios = <&arduino_header 16 GPIO_ACTIVE_LOW>; /* D10 */
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
 };
 
 &i2c0 {
 	compatible = "nordic,nrf-twi";
-	status = "disabled";
+	status = "okay";
 	pinctrl-0 = <&i2c0_default>;
 	pinctrl-1 = <&i2c0_sleep>;
 	pinctrl-names = "default", "sleep";
 };
 
-&qspi {
-	status = "disabled";
-	pinctrl-0 = <&qspi_default>;
-	pinctrl-1 = <&qspi_sleep>;
-	pinctrl-names = "default", "sleep";
-	mx25r64: mx25r6435f@0 {
-		compatible = "nordic,qspi-nor";
-		reg = <0>;
-		/* MX25R64 supports only pp and pp4io */
-		writeoc = "pp4io";
-		/* MX25R64 supports all readoc options */
-		readoc = "read4io";
-		sck-frequency = <8000000>;
-		jedec-id = [c2 28 17];
-		sfdp-bfp = [
-			e5 20 f1 ff  ff ff ff 03  44 eb 08 6b  08 3b 04 bb
-			ee ff ff ff  ff ff 00 ff  ff ff 00 ff  0c 20 0f 52
-			10 d8 00 ff  23 72 f5 00  82 ed 04 cc  44 83 68 44
-			30 b0 30 b0  f7 c4 d5 5c  00 be 29 ff  f0 d0 ff ff
-		];
-		size = <67108864>;
-		has-dpd;
-		t-enter-dpd = <10000>;
-		t-exit-dpd = <35000>;
-	};
-};
+// &qspi {
+// 	status = "disabled";
+// 	pinctrl-0 = <&qspi_default>;
+// 	pinctrl-1 = <&qspi_sleep>;
+// 	pinctrl-names = "default", "sleep";
+// 	mx25r64: mx25r6435f@0 {
+// 		compatible = "nordic,qspi-nor";
+// 		reg = <0>;
+// 		/* MX25R64 supports only pp and pp4io */
+// 		writeoc = "pp4io";
+// 		/* MX25R64 supports all readoc options */
+// 		readoc = "read4io";
+// 		sck-frequency = <8000000>;
+// 		jedec-id = [c2 28 17];
+// 		sfdp-bfp = [
+// 			e5 20 f1 ff  ff ff ff 03  44 eb 08 6b  08 3b 04 bb
+// 			ee ff ff ff  ff ff 00 ff  ff ff 00 ff  0c 20 0f 52
+// 			10 d8 00 ff  23 72 f5 00  82 ed 04 cc  44 83 68 44
+// 			30 b0 30 b0  f7 c4 d5 5c  00 be 29 ff  f0 d0 ff ff
+// 		];
+// 		size = <67108864>;
+// 		has-dpd;
+// 		t-enter-dpd = <10000>;
+// 		t-exit-dpd = <35000>;
+// 	};
+// };
+

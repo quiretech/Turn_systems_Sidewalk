@@ -22,8 +22,12 @@ target_sources(app PRIVATE
   src/board_events.c
   src/sidewalk_callbacks.c
   src/u_adc_turn.c
+  #src/u_spi_turn.c
   #src/u_app_timers.c
+  #src/u_app_nfc.c
   src/u_app_turn.c
   src/u_uart_turn.c
   src/u_led_turn.c
+  src/u_i2c_turn.c
+  src/u_esp32_turn.c
 )

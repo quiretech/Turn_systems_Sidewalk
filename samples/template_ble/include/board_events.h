@@ -8,13 +8,18 @@
 #define BOARD_EVENTS_H
 
 #include <application_thread.h>
+#include <u_app_turn.h>
 
 /**
  * @brief Application handler for sending hello message
  *
  * @param application_ctx
  */
+#if defined(CONFIG_TURN_APP)
+void button_event_send_hello(app_ctx_t *application_ctx,  turn_data_packet *data);
+#else
 void button_event_send_hello(app_ctx_t *application_ctx);
+#endif //#if defined(CONFIG_TURN_APP)
 
 /**
  * @brief Application handler for sending battery level

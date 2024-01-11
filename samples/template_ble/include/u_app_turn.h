@@ -1,10 +1,11 @@
 #ifndef U_APP_TURN_H
 #define U_APP_TURN_H
 
-#define BATT_LOW_LEVEL      57      //Battery too low to deploy
-#define BATT_25             59      //Low battery      
+#define BATT_LOW_LEVEL_V    1780    //5.6     //Battery voltage too low to deploy
+#define BATT_25P_V          1850    //5.8     //Low battery in Volts   
 #define BUZZER_PIN_2        25      //Buzzer pin
-#define FULL_BIN            15      //Bin full thresold
+#define BIN_FULL_IN         1160    //10      //Bin full thresold in inches
+#define BIN_FULL_75P_IN     1000    //15      //Bin full thresold in inches
 #define FREQ_IN_US          425     //pwm frequency for buzzer
 #define PWM_DUTY            90      //pwm duty for buzzer
 #define ADC_TO_CM(x)      (2100/x) - 3.21  //(183 - x)/3.59
@@ -42,7 +43,7 @@ typedef struct turn_data{
  *
  * @param delay expected delay.
  */
-void system_timer_set_and_run(k_timeout_t delay);
+void system_timer_set_and_run(k_timeout_t delay); //local
 
 /**
  * @brief System timer stop.
@@ -50,12 +51,14 @@ void system_timer_set_and_run(k_timeout_t delay);
  */
 void system_timer_stop(void);
 
-void turn_app_thread_init(void);
+void turn_app_thread_init(void);// local
 
-void init_data_packet(void);
+void init_data_packet(void);    // local
 
-void u_app_turn_init(void);
+void init_system_data(void);    // local
 
-turn_data_packet* get_data_packket_pointer(void);
+void u_app_turn_init(void);     // global
+
+turn_data_packet* get_data_packket_pointer(void); //local
 
 #endif //U_APP_TURN_H
