@@ -1151,7 +1151,7 @@ void logic_machine()
             }
             else // if lid is close
             {
-                printk("%i\n", i++);
+                //printk("%i\n", i++);
 
                 //this.current_state = Idle;
 
