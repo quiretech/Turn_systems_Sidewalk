@@ -14,11 +14,4 @@
 
 //Timer #define
 
-
-
-
-
-
-
-
 #endif // #if defined(CONFIG_TURN_APP)

@@ -9,7 +9,8 @@
             "board_events.h": "c",
             "application_thread.h": "c",
             "device.h": "c",
-            "app_ble_config.h": "c"
+            "app_ble_config.h": "c",
+            "nordic_dfu.h": "c"
         }
     }
 }

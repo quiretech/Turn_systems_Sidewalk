@@ -33,6 +33,7 @@
 #include <u_spi_turn.h>
 #include <u_i2c_turn.h>
 #include <u_esp32_turn.h>
+#include <u_buzzer_turn.h>
 
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
@@ -41,20 +42,20 @@
 #include <zephyr/drivers/pwm.h>
 
 #define TURN_THREAD_PRIORITY        14
-#define TURN_THREAD_START_DELAY_MS  25000
+#define TURN_THREAD_START_DELAY_MS  2000
 
 extern struct k_msgq u_uart0_received_msgq;
 extern struct k_msgq u_uart1_received_msgq;
+extern struct k_msgq u_sid_received_msgq;
 
 static const struct pwm_dt_spec pwm_led0 = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
-static const struct pwm_dt_spec buzzer_on = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 
 #define NUM_STEPS	50U
 #define SLEEP_MSEC	25U
 //#define MAX_PULSE_WIDTH   2500000 // In nsec
 #define MAX_PULSE_WIDTH     500000 // In nsec
 //#define MIN_PULSE_WIDTH   500000	// In nsec
-#define MIN_PULSE_WIDTH     2500000	// In nsec
+#define MIN_PULSE_WIDTH     1200000	// In nsec
 #define MID_PULSE_WIDTH     1500000 // In nsec
 #define STEP 		        10000	// In nsec
 
@@ -67,18 +68,13 @@ static const struct pwm_dt_spec buzzer_on = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 #define OFF                     0
 #define ON                      1
 
+#define UHF_POWER_LEVEL_DFAULT  25 // Range 0-25
+#define DISPLAY_MSG     0x31
 
-//Buzzer
 
-#define BUZZER_FREQUENCY_HZ 2700
-#define BUZZER_PERIOD_NS    (1000000/BUZZER_FREQUENCY_HZ)*1000
-#define BUZZER_DUTY_100     50         
-#define BUZZER_DUTY_NS      (BUZZER_PERIOD_NS * BUZZER_DUTY_100)/100
-/*
- * Get button configuration from the devicetree doww_open alias. This is mandatory.
+ /* Get button configuration from the devicetree doww_open alias. This is mandatory.
  */
 #define DOOR_OPEN	    DT_ALIAS(dooropen)
-//#define BUZZER_ON   DT_ALIAS(b1en)
 #define UNLOCK_DOOR     DT_ALIAS(sol1en)
 #define SERVO_POWER_ON  DT_ALIAS(sol2en)
 #define LED_POWER_ON    DT_ALIAS(leden)
@@ -91,18 +87,12 @@ static const struct pwm_dt_spec buzzer_on = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led1));
 static const struct gpio_dt_spec door_open = GPIO_DT_SPEC_GET_OR(DOOR_OPEN, gpios, {0});
 static struct gpio_callback door_open_cb_data;
 
-//static const struct gpio_dt_spec buzzer_on      = GPIO_DT_SPEC_GET_OR(BUZZER_ON, gpios, {0});
 static const struct gpio_dt_spec unlock_door    = GPIO_DT_SPEC_GET_OR(UNLOCK_DOOR, gpios, {0});
 static const struct gpio_dt_spec servo_power_on = GPIO_DT_SPEC_GET_OR(SERVO_POWER_ON, gpios, {0});
 static const struct gpio_dt_spec led_power_on   = GPIO_DT_SPEC_GET_OR(LED_POWER_ON, gpios, {0});
 static const struct gpio_dt_spec ir_sen_power_on = GPIO_DT_SPEC_GET_OR(IR_SEN_POWER_ON, gpios, {0});
 static const struct gpio_dt_spec uhf_enable     = GPIO_DT_SPEC_GET_OR(UHF_ENABLE, gpios, {0});
 
-// UART
-// const struct device *uart= DEVICE_DT_GET(DT_NODELABEL(uart0));
-// static uint8_t tx_buf[] =  {0x0a,0x55,0x0d};//{"Test String\n\r"};
-// static uint8_t uhf_sample[] =  {"UU3000E280689000004006D0B55C1125E711"};//{"Test String\n\r"};
-// static uint8_t rx_buf[RECEIVE_BUFF_SIZE] = {0};
 
 #define TURN_THREAD_STACK_SIZE 1024
 
@@ -130,31 +120,33 @@ static const struct gpio_dt_spec uhf_enable     = GPIO_DT_SPEC_GET_OR(UHF_ENABLE
 #define SHTDWN              "Shutdown 1"      //AWS command to turn off 5 volt
 
 //System variable
-bool          toggle = false;         //To toggle leds for low battery indication
-volatile bool ble_connected;          //bool to signify if ble is connected toggled in main.c
-static volatile bool ready_flag;      // bool for pwm callback function
-uint8_t       bin_full_counter = 0;   // counter to toggle leds/buzzer for bin full indication
-uint8_t       lid_jam_counter = 0;    // counter to toggle leds/buzzer for lid jam indication
-uint16_t      read_loc = 0;           // read location for memory read and transmit via ble
-volatile bool mem_read;               //bool to start memory read
-uint16_t      buzzer_freq = FREQ_IN_US; //Frequency in microseconds defined in config.h
-uint8_t       buzzer_pwm = PWM_DUTY;  //Duty cycle for pwm
+bool          toggle = false;                 //To toggle leds for low battery indication
+volatile bool ble_connected;                  //bool to signify if ble is connected toggled in main.c
+static volatile bool ready_flag;              // bool for pwm callback function
+uint8_t       bin_full_counter = 0;           // counter to toggle leds/buzzer for bin full indication
+uint8_t       lid_jam_counter = 0;            // counter to toggle leds/buzzer for lid jam indication
+uint16_t      read_loc = 0;                   // read location for memory read and transmit via ble
+volatile bool mem_read;                       //bool to start memory read
 uint8_t       timer_counter = 0; 
-bool          flag_50ms = false;      //50ms flag
-bool          flag_100ms  = false;      //100msflag
-bool          flag_200ms = false;     //200ms flag
-bool          flag_10s = false;     //200ms flag
+bool          flag_50ms = false;              //50ms flag
+bool          flag_100ms  = false;            //100msflag
+bool          flag_200ms = false;             //200ms flag
+bool          flag_10s = false;               //200ms flag
 bool          door_is_open = false;
 bool          door_state_change = false;
 bool          uhf_data_received = false;
 bool          nfc_data_received = false;
+bool          sid_data_received = false;
 bool          lid_jam_timer_expiered = false;
 uint16_t      uhf_pacaket_len;
+uint8_t       uhf_power_level = UHF_POWER_LEVEL_DFAULT;
 uint8_t       counter_uhf = 0; 
 static uint8_t nfc_data_buf[32] = {0};
 static uint8_t uhf_data_buf[32] = {0};
+static uint8_t sid_data_buf[64] = {0};
 static uint16_t nfc_data_len;
 static uint16_t uhf_data_len;
+static uint16_t sid_data_len;
 uint8_t       nfc_counter = 0;
 uint8_t       eeprom_no = 1;
 bool          chip_read= false;
@@ -167,7 +159,7 @@ uint8_t       password[5];
 uint8_t       shtdn[10];
 bool          prox;                 // variable for proximity sensor
 uint32_t      data_id_counter = 0;
-bool            cup_in = false;
+bool          cup_in = false;
 
 //Different states for state machine
 typedef enum
@@ -175,6 +167,7 @@ typedef enum
   Idle = 0,
   NFC,
   UHF,
+  SID_msg,
   Mem_write,
   Mem_write_UHF,
   Mem_read,
@@ -187,18 +180,7 @@ typedef enum
   default_state
 }states;
 
-//Different events stored in packets
-typedef enum
-{
-  NFC_EVE = 1,
-  UHF_EVE,
-  LID_EVE,
-  BIN_FULL,
-  LOW_BATT,
-  LID_JAM,
-  SYS_CHECK,
-  SYS_OFF
-}events;
+
 
 //Data structure to be stored in EEPROM
 // struct {
@@ -218,48 +200,73 @@ turn_data_packet turn_packet;
 //this structure to simplify all the variable management
 struct
 {
-  uint8_t uid[7]; //Variable to store NFC UID
-  uint8_t header[2]; //Header of data packer
-  uint8_t data_id[3]; // Unique data id for every event
-  uint8_t bin_id[6]; // Bin ID different for every bin
-  uint8_t adc_bin; // analog sensor reading value of bin full sensor
-  uint8_t adc_batt; // analog sensor reading value of battery sensor
-  uint8_t uhf_data[256]; // data recieved from uart communication with the UHF
-  uint8_t uhf_ids[256]; // data packets with uhf id to be stored in memory
-  uint8_t cup_id[12]; //cup id uhf data
-  uint8_t cup_id_temp[24]; //Temp storage for uhf cup data (ASCII characters needed to be converted to hex)
-  uint8_t cup; //cups read in a single read
-  uint8_t time[4];//Set time variable
+  uint8_t uid[7];           // Variable to store NFC UID
+  uint8_t header[2];        // Header of data packer
+  uint8_t data_id[3];       // Unique data id for every event
+  uint8_t bin_id[6];        // Bin ID different for every bin
+  uint16_t adc_bin;          // analog sensor reading value of bin full sensor
+  uint16_t adc_batt;         // analog sensor reading value of battery sensor
+  uint8_t uhf_data[256];    // data recieved from uart communication with the UHF
+  uint8_t uhf_ids[256];     // data packets with uhf id to be stored in memory
+  uint8_t cup_id[12];       // cup id uhf data
+  uint8_t cup_id_temp[24];  // Temp storage for uhf cup data (ASCII characters needed to be converted to hex)
+  uint8_t cup;              // cups read in a single read
+  uint8_t time[4];          // Set time variable
   uint8_t u_ble_rec_buf[4];
-  uint8_t cup_no; //Total number of cups read since lid open
-  bool uid_read;  // NFC read successful or not
-  bool uid_read_prev; //Previous UID to stop same uid write multiple times 
-  bool system_check; // System check
-  bool lid_open; //LID open check
+  uint8_t cup_no;           // Total number of cups read since lid open
+  bool uid_read;            // NFC read successful or not
+  bool uid_read_prev;       // Previous UID to stop same uid write multiple times 
+  bool system_check;        // System check
+  bool lid_open;            // LID open check
   bool lid_open_prev;
-  bool lid_jam; //LID JAM
-  bool ble_on; // Variable to prevent from calling advertsing start multiple times
-  bool mem_write; // After making a packet called to write the packet to eeprom
+  bool lid_jam;             // LID JAM
+  bool ble_on;              // Variable to prevent from calling advertsing start multiple times
+  bool mem_write;           // After making a packet called to write the packet to eeprom
   bool system_status_check; // periodic system check flag
-  bool bin_full; // bin full indicator
-  bool bin_75P_full;
-  bool uhf_timeout; // used when lid jam occurs
-  bool uhf_mem_write; // used to write uhf data to eeprom
-  bool batt_low;
-  bool batt_25P;
-  bool sys_off;
-  bool deposit_cup;
-  bool display_wipe;
-  bool display_thanks;
+  bool bin_full;            // bin full indicator
+  bool bin_75P_full;        // Bin is 75% percent full
+  bool uhf_timeout;         // used when lid jam occurs
+  bool uhf_mem_write;       // used to write uhf data to eeprom
+  bool batt_low;            // Battery less than 10% 
+  bool batt_25P;            // Battery less than 25%
+  bool sys_off;             // Turn system off
+  bool deposit_cup;         // Display cup message
+  bool display_wipe;        // Wipe message blank
+  bool display_thanks;      // "Thank you" Display
 
   states current_state; //current state of state machine
   states previous_state; //previous state of state machine
 }this;
 
 
+// Sidewalk message received structure
+struct
+{
+    char Buzzer_Set;
+    char NFC_Set;
+    char Bin_Level;
+    char UHF_Power;
+    char display_msg_set;
+    char BinID_Set;
+    char NFC_Merch_Set;
+    char Boot_mode;
+}sys_config = {
+            '1',    //Buzzer_Set
+            '1',    //NFC_Set
+            '1',    //Bin_Level
+            '1',    //UHF_Power
+            '1',    //display_msg_set
+            '1',    //BinID_Set
+            '1',    //NFC_Merch_Set
+            '1',    //Boot_mode
+};
+
+
 void init_data_packet(void){
 
-  memset(&turn_packet,0,32);
+  //memset(&turn_packet,0,32);
+  memset(&turn_packet,0,24);
+
   
 	//turn_packet.header[0] 	= 0x31;
 	//turn_packet.header[1] 	= 0x32;
@@ -392,7 +399,7 @@ void lid_open_pwm()
     ret = pwm_set_pulse_dt(&pwm_led0, (uint32_t)MIN_PULSE_WIDTH);
     if(ret) 
     {
-        printk("Error %d: failed to set pulse width\n", ret);
+        printk("Error %d: failed to set servo open pulse width\n", ret);
     }
   
 }
@@ -406,7 +413,7 @@ void lid_close_pwm()
     ret = pwm_set_pulse_dt(&pwm_led0, (uint32_t)MAX_PULSE_WIDTH);
     if(ret) 
     {
-        printk("Error %d: failed to set pulse width\n", ret);
+        printk("Error %d: failed to set servo close pulse width\n", ret);
     }
   
 }
@@ -449,15 +456,18 @@ void door_open_function(const struct device *dev, struct gpio_callback *cb, uint
 
     door_state_change = true;
     data_id_counter++;
+    //printk("Door Change\n");
 
     if(gpio_pin_get_dt(&door_open)){
         door_is_open = true;
-        this.lid_open = true;    
+        this.lid_open = true;
+        //printk("lid open\n");
     } 
     else
     {
         door_is_open = false;
         this.lid_open = false;
+        //printk("lid closed\n");
     }
 
 }
@@ -548,7 +558,8 @@ static void lid_jam_timer_cb(struct k_timer *timer_id)
 
     // open lide to release the jam
     lid_open_pwm();
-    //printk("lid jam Open lid called\n");
+    buzzer_beep(COUNT_FIVE, MS_THOUSAND, 50);
+    printk("lid jam Open lid called\n");
 
     // timer to close lid in few seconds
     //k_timer_start(&lid_close_timer, K_MSEC(LID_JAM_CLOSE_DURATION), K_NO_WAIT);
@@ -562,7 +573,6 @@ static void lid_close_timer_cb(struct k_timer *timer_id)
 
     // Close lid
     lid_close_pwm();
-
 }
 
 static void uhf_off_timer_cb(struct k_timer *timer_id)
@@ -583,7 +593,7 @@ static void display_off_timer_cb(struct k_timer *timer_id)
     int ret;
 
     //printk("Display OFF.\n");
-    display_power(OFF);
+ //   display_power(OFF);
     
 
 }
@@ -591,7 +601,7 @@ static void display_off_timer_cb(struct k_timer *timer_id)
 void system_timer_set_and_run(k_timeout_t delay)
 {
 	k_timer_start(&system_timer, delay, K_MSEC(50));
-    k_timer_start(&status_check_timer, K_MSEC(5000) , K_MSEC(1000));
+    k_timer_start(&status_check_timer, K_MSEC(30000) , K_MSEC(5000));
 }
 
 void system_timer_stop()
@@ -614,8 +624,11 @@ void check_system_status()
     bin_value  = u_adc_bin_level();
     batt_value = u_adc_batt_volt();
 
-    // printk("%i\n",bin_value);
-    // printk("%i\n",batt_value);
+    this.adc_bin    = (uint16_t)bin_value;
+    this.adc_batt   = (uint16_t)batt_value;
+
+    printk("IR Sersor Value         : %i\n",this.adc_bin);
+    printk("Battery Sensor Value    : %i\n",this.adc_batt);
     // printk("----\n");
 
     // ret = time_request_esp32(esp32_time);
@@ -636,13 +649,13 @@ void check_system_status()
     }
     else if((bin_value < BIN_FULL_IN))
     {
-        //printk("BIN_FULL_75_IN\n");
+        printk("BIN_FULL_75\n");
         this.bin_75P_full = true;
         this.bin_full = false;
     }
     else if(bin_value > BIN_FULL_IN)
     {
-        //printk("BIN_FULL_IN\n");
+        printk("BIN_FULL\n");
         this.bin_75P_full = true;
         this.bin_full = true;
     }
@@ -657,13 +670,13 @@ void check_system_status()
     {
         this.batt_25P = true;
         this.batt_low = false;
-        //printk("BATT_25P\n");
+        printk("BATT_25P\n");
     }
     else if(batt_value < BATT_LOW_LEVEL_V)
     {
         this.batt_25P = true;
         this.batt_low = true;
-        //printk("BATT_LOW\n");
+        printk("BATT_LOW\n");
     }
     
 }
@@ -843,6 +856,12 @@ void state_machine()
                 this.current_state = UHF;
                 //printk("uhf_data_received.\n");
             }
+            else if(sid_data_received)
+            {
+                sid_data_received = false;
+                this.current_state = SID_msg;
+                //printk("SID_data_received.\n");
+            }
             break;
         
         case Bin_full:
@@ -851,7 +870,7 @@ void state_machine()
 
             //printk("State Bin full.\n");
 
-            check_system_status();
+            //check_system_status();
             //this.current_state = Idle;
 
             if(nfc_data_received)
@@ -863,6 +882,12 @@ void state_machine()
             {
                 uhf_data_received = false;
                 this.current_state = UHF;
+            }
+            else if(sid_data_received)
+            {
+                sid_data_received = false;
+                this.current_state = SID_msg;
+                //printk("SID_data_received.\n");
             }
 
             //this.system_status_check = true;
@@ -881,14 +906,17 @@ void state_machine()
                 lid_open_pwm();
             } 
             this.deposit_cup = true;
+
+            // Add buzzer noise
+            buzzer_beep(COUNT_TWO, MS_THOUSAND,50);
             
             k_timer_start(&uhf_timer, K_MSEC(LID_CLOSE_NFC_DURATION), K_NO_WAIT);
             nfc_data_len = 0;
             turn_packet.event_id = NFC_EVE;
             printk("NFC id = %s\n",nfc_data_buf);
-            memcpy(turn_packet.data,&nfc_data_buf[1],13);
+            memcpy(turn_packet.data,&nfc_data_buf[0],20);
             
-            //app_event_send((app_event_t)event1);
+            app_event_send((app_event_t)event1);
 
             this.current_state = Idle;
 
@@ -899,6 +927,7 @@ void state_machine()
             //printk("State UHF.\n");
             
             ret = u_uart0_get_rx_buf(uhf_data_buf, uhf_data_len); // Get data from UHF UART buffer
+            uhf_data_len = 0;
 
             if(this.lid_jam == false & this.bin_full == false) // try opening lid only if its not jammed
             {
@@ -908,18 +937,50 @@ void state_machine()
             this.deposit_cup = true;
 
             // Add buzzer noise
+            buzzer_beep(COUNT_THREE, MS_THOUSAND, 50);
             
             k_timer_start(&uhf_timer, K_MSEC(LID_CLOSE_UHF_DURATION), K_NO_WAIT);
 
-            uhf_data_len = 0;
+            
             turn_packet.event_id = UHF_EVE;
             printk("UHF id = %s\n",uhf_data_buf);
-            memcpy(turn_packet.data,&uhf_data_buf[19],13);
+            memcpy(turn_packet.data,&uhf_data_buf[21],13);
 
             //cup_in = true;
             
-            //app_event_send((app_event_t)event1);
+            app_event_send((app_event_t)event1);
 
+            this.current_state = Idle;
+            break;
+
+        case SID_msg:
+
+            u_sid_get_rx_buf(sid_data_buf, sid_data_len);
+            //printk("Sid message : %s\n", sid_data_buf);
+
+            // sys_config.Buzzer_Set       = (uint8_t)sid_data_buf[0];
+            // sys_config.NFC_Set          = (uint8_t)sid_data_buf[2];
+            // sys_config.Bin_Level        = (uint8_t)sid_data_buf[4];
+            // sys_config.UHF_Power        = (uint8_t)sid_data_buf[6];
+            // sys_config.display_msg_set  = (uint8_t)sid_data_buf[8];
+            // sys_config.BinID_Set        = (uint8_t)sid_data_buf[10];
+            // sys_config.NFC_Merch_Set    = (uint8_t)sid_data_buf[12];
+            // sys_config.Boot_mode        = (uint8_t)sid_data_buf[14];
+
+            // sys_config.Buzzer_Set       = (uint8_t)sid_data_buf[0];
+            // sys_config.NFC_Set          = (uint8_t)sid_data_buf[1];
+            // sys_config.Bin_Level        = (uint8_t)sid_data_buf[2];
+            // sys_config.UHF_Power        = (uint8_t)sid_data_buf[3];
+            // sys_config.display_msg_set  = (uint8_t)sid_data_buf[4];
+            // sys_config.BinID_Set        = (uint8_t)sid_data_buf[5];
+            // sys_config.NFC_Merch_Set    = (uint8_t)sid_data_buf[6];
+            // sys_config.Boot_mode        = (uint8_t)sid_data_buf[7];
+
+            turn_packet.event_id = SID_MSG_EVE;
+            printk("SID data = %s\n",sid_data_buf);
+            memcpy(turn_packet.data,&sid_data_buf[0],20);
+
+            app_event_send((app_event_t)event1);
             this.current_state = Idle;
             break;
 
@@ -947,7 +1008,7 @@ void state_machine()
             //standby_mode();
             //k_timer_start(&status_check_timer, K_MSEC(1000) , K_NO_WAIT);
             //this.system_status_check = true;
-            check_system_status();
+            //check_system_status();
             this.current_state = Idle;
             break;
 
@@ -967,6 +1028,12 @@ void state_machine()
                 uhf_data_received = false;
                 this.current_state = UHF;
             }
+            else if(sid_data_received)
+            {
+                sid_data_received = false;
+                this.current_state = SID_msg;
+                //printk("SID_data_received.\n");
+            }
             break;
 
         default:
@@ -983,7 +1050,7 @@ void logic_machine()
     static uint32_t event1 = BUTTON_EVENT_SEND_HELLO;
     #endif // endif defined(CONFIG_SIDEWALK)
 
-    int i;
+    static int i = 0;
 
     // this.bin_full = false;
     // this.batt_low = false;
@@ -1012,7 +1079,15 @@ void logic_machine()
             {
                 if(this.display_thanks)
                 {
-                    display_thanks();
+                    if(sys_config.display_msg_set == 0x31)
+                    {
+                        display_thanks();
+                    }
+                    else if(sys_config.display_msg_set == 0x32)
+                    {
+                        display_pepsi();
+                    }
+                    //display_thanks();
                     this.display_thanks = false;
                     //this.display_wipe = true;
                     k_timer_start(&display_off_timer, K_MSEC(5000) , K_NO_WAIT);
@@ -1038,17 +1113,17 @@ void logic_machine()
                 if(door_state_change)
                 {
                     door_state_change = false;
-                    //printk("Lid open\n");
+                    printk("Lid open\n");
                                         
-                    turn_packet.event_id = LID_EVE;
+                    turn_packet.event_id = LID_OPEN;
                     turn_packet.data[0] = this.lid_open;
 
-                    for(i = 0; i < 3; i++)
-                    {
-                        turn_packet.data_id[2-i] = (uint8_t)(data_id_counter >> (i*8) & 0x000000ff);
-                    }
+                    // for(i = 0; i < 3; i++)
+                    // {
+                    //     turn_packet.data_id[2-i] = (uint8_t)(data_id_counter >> (i*8) & 0x000000ff);
+                    // }
                     
-                    app_event_send((app_event_t)event1); // Send data to sidewalk
+                    //app_event_send((app_event_t)event1); // Send data to sidewalk
 
                     // This section check of the lid is jam due to mechincal malfunction of user error
                     k_timer_start(&lid_jam_timer, K_MSEC(LID_JAM_OPEN_DURATION), K_NO_WAIT);
@@ -1076,7 +1151,7 @@ void logic_machine()
             }
             else // if lid is close
             {
-                //printk("lid closed");
+                printk("%i\n", i++);
 
                 //this.current_state = Idle;
 
@@ -1087,19 +1162,20 @@ void logic_machine()
                 {
                     door_state_change = false;
 
-                    //printk("lid closed\n");
+                    printk("lid closed\n");
+
                     lid_jam_retry = 0; //   Reset count for detecting lid jam as lid is close
                     k_timer_stop(&lid_jam_timer); // stop the lid jam detection timer when lid closed
 
-                    turn_packet.event_id = LID_EVE;
+                    turn_packet.event_id = LID_CLOSE;
                     turn_packet.data[0] = this.lid_open;
 
-                    for(i = 0; i < 3; i++)
-                    {
-                        turn_packet.data_id[2-i] = (uint8_t)(data_id_counter >> (i*8) & 0x000000ff);
-                    }
+                    // for(i = 0; i < 3; i++)
+                    // {
+                    //     turn_packet.data_id[2-i] = (uint8_t)(data_id_counter >> (i*8) & 0x000000ff);
+                    // }
                     
-                    app_event_send((app_event_t)event1); // Send data to sidewalk
+                    //app_event_send((app_event_t)event1); // Send data to sidewalk
                 }                
             }
         }
@@ -1111,12 +1187,14 @@ void logic_machine()
                 //printk("*inside %i\n", this.current_state);
                 this.current_state = Bin_full;                
             }
-            printk("Bin full\n");       
+            buzzer_beep(COUNT_FIVE, MS_FIVE_HUNDRED * 5, 10);
+            //printk("Bin full\n");       
         }
     }
     else    // if battery is below low level
     {
         this.current_state = Batt_low;
+        buzzer_beep(COUNT_FIVE, MS_NINE_HUNDRED * 5, 30);
         //printk("Batt low\n");
         //this.system_status_check = true;
 
@@ -1130,10 +1208,6 @@ void logic_machine()
 
     state_machine();
 }
-
-
-
-
 
 
 turn_data_packet* get_data_packket_pointer(void)
@@ -1277,7 +1351,7 @@ static void turn_app_entry(void *dummy0, void *dummy1, void *dummy2)
 
     app_event_send((app_event_t)event0); // Send request for connection
 
-    write_power(18);
+    ufh_power_set(uhf_power_level);
 
     k_msleep(2000);
 
@@ -1287,13 +1361,22 @@ static void turn_app_entry(void *dummy0, void *dummy1, void *dummy2)
 		printk("Error: PWM device %s is not ready\n",
 		       pwm_led0.dev->name);
 	}
+    else{
+        printk("PWM device %s not ready\n",
+		       pwm_led0.dev->name);
+    }
 
-    if (!device_is_ready(buzzer_on.dev)) {
-		printk("Error: PWM device %s is not ready\n",
-		       buzzer_on.dev->name);
-	}
+    // if (!device_is_ready(pwm_led1.dev)) {
+	// 	printk("Error: PWM device %s is not ready\n",
+	// 	       pwm_led1.dev->name);
+	// }
+    // else{
+    //     printk("PWM device %s not ready\n",
+	// 	       pwm_led1.dev->name);
+    // }
 
-    uint8_t brt_level;
+    u_init_buzzer();
+
     
 
     // Init all output power control
@@ -1303,11 +1386,13 @@ static void turn_app_entry(void *dummy0, void *dummy1, void *dummy2)
     // gpio_pin_set_dt(&led_power_on, 0);
 
     lid_motor_power(ON);
-    k_timer_start(&lid_jam_timer, K_MSEC(LID_JAM_OPEN_DURATION), K_NO_WAIT); // clear if anything jammed
     ir_sensor_power(ON);
     door_unlock(OFF);
     display_power(OFF);
     uhf_power(ON);
+
+    k_timer_start(&lid_jam_timer, K_MSEC(LID_JAM_OPEN_DURATION), K_NO_WAIT); // clear if anything jammed
+    
 
     this.current_state = Idle;
 
@@ -1354,126 +1439,15 @@ static void turn_app_entry(void *dummy0, void *dummy1, void *dummy2)
                 nfc_data_received = true;
                 //printk("got UART1 msg queue.\n");
             }
+            else if(!k_msgq_get(&u_sid_received_msgq, &sid_data_len, K_NO_WAIT))
+            {
+                sid_data_received = true;
+                //printk("got SID msg queue.\n");
+                //printk("sid msg lenght = %d\n", sid_data_len);
+            }
+
 
             logic_machine(); 
-
-            
-        //     //brt_level = (uint8_t)(u_adc_bin_level()/15)-17;
-        //     brt_level = u_adc_bin_level();
-        //     //if(brt_level >= 150){ brt_level = 150;}
-        //     //color_wipe(0,0,0,brt_level,100);
-        //     printk("Bin level %i  %i\n",u_adc_batt_volt(), u_adc_bin_level());
-        //     flag_50ms = false;
-        //     //cup_in = false;
-        // }
-        // else if (this.bin_full)// | this.batt_low)
-        // {
-        //     display_pepsi();
-        // }        
-        // else if(door_state_change)
-        // {
-            
-        //     //updata_msg_packet((turn_data_packet*)packet);
-        //     if(door_is_open)
-        //     {
-        //         turn_packet.event_id = 1;
-        //     } else
-        //     {
-        //         turn_packet.event_id = 2;
-        //     }
-        //     //memcpy(&rx_buf[19],turn_packet.data,13);
-        //     //app_event_send((app_event_t)event1);
-
-        //     door_state_change = false;
-        //     printk("led toggle \n");            
-	    // } 
-        // else if(uhf_data_received)
-        // {
-        //     //printk("uhf_data_received \n");
-        //     //printk("-----\n");
-        //     //printk("%s\n",rx_buf);
-        //     uhf_data_received = false;
-            
-        //     if(data_len > 4) //data_len is obtained for msg queue fn k_msgq_get
-        //     {
-        //         ret = u_uart0_get_rx_buf(data_buf, data_len);
-
-        //         pulse_width = MIN_PULSE_WIDTH;
-        //         ret = pwm_set_pulse_dt(&pwm_led0, pulse_width);
-        //                         if(ret) 
-        //         {
-        //             printk("Error %d: failed to set pulse width\n", ret);
-        //         }
-        //         cup_in = true;
-        //         //gpio_pin_set_dt(&buzzer_on, GPIO_OUTPUT_ACTIVE);
-
-        //         k_timer_start(&uhf_timer, K_MSEC(4000), K_NO_WAIT);
-        //         data_len = 0;
-        //         turn_packet.event_id = 3;
-        //         printk("UHF id = %s\n",data_buf);
-        //         memcpy(turn_packet.data,&data_buf[19],13);
-                
-        //         app_event_send((app_event_t)event1);
-        //     }            
-
-        //     memset(data_buf,0,256); // make all data in the buf 0
-
-        // }
-        // else if(nfc_data_received)
-        // {
-        //     //printk("nfc_data_received \n");
-        //     //printk("-----\n");
-        //     //printk("%s\n",rx_buf);
-        //     nfc_data_received = false;
-            
-        //     if(data_len > 4)  //data_len is obtained for msg queue fn k_msgq_get
-        //     {
-        //         ret = u_uart1_get_rx_buf(data_buf, data_len);
-
-        //         pulse_width = MIN_PULSE_WIDTH;
-        //         ret = pwm_set_pulse_dt(&pwm_led0, pulse_width);
-        //         cup_in = true;
-        //         if(ret) 
-        //         {
-        //             printk("Error %d: failed to set pulse width\n", ret);
-        //         }
-        //         k_timer_start(&uhf_timer, K_MSEC(4000), K_NO_WAIT);
-        //         data_len = 0;
-        //         turn_packet.event_id = 3;
-        //         printk("NFC id = %s\n",data_buf);
-        //         memcpy(turn_packet.data,&data_buf[1],13);
-                
-        //         app_event_send((app_event_t)event1);
-        //     }            
-
-        //     memset(data_buf,0,256); // make all data in the buf 0
-
-        // }
-        // else if(flag_10s)
-        // {   
-        //     flag_10s = false;
-
-        //     color_wipe( 0, 0, 0, 0, 100);
-        //     gpio_pin_set_dt(&servo_power_on, 0);
-        //     gpio_pin_set_dt(&led_power_on, 0);
-            
-        //     static int count_10s = 0;
-        //     count_10s++;
-
-        //     if(count_10s >= 2){
-        //         turn_packet.event_id = 4;
-        //         memset(turn_packet.data,0,13);
-        //         app_event_send((app_event_t)event1);
-        //         count_10s = 0;
-        //     }
-        // }
-
-        // nfc check 
-
-        //uhf_data_received = check_new_uhf_tag(uhf_data_buf);
-        //nfc_data_received = check_new_nfc_tag(nfc_data_buf);
-
-
         }
 
         if(flag_10s)
@@ -1482,9 +1456,9 @@ static void turn_app_entry(void *dummy0, void *dummy1, void *dummy2)
             count_10s++;
             if(count_10s >= 2)
             {
-                turn_packet.event_id = 4;
+                turn_packet.event_id = SYS_CHECK;
                 memset(turn_packet.data,0,13);
-                //app_event_send((app_event_t)event1);
+                app_event_send((app_event_t)event1);
                 count_10s = 0;
             }
         }

@@ -45,7 +45,7 @@ uint8_t i2c_scan(void)
         {
             //detected_device = true;
             twi_addr[address] = true;
-            printk("TWI device detected at address 0x%x\n.", address);
+            //printk("TWI device detected at address 0x%x\n.", address);
             ret = 0;
         }
         

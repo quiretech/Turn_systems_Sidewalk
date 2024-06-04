@@ -26,6 +26,7 @@ target_sources(app PRIVATE
   #src/u_app_timers.c
   #src/u_app_nfc.c
   src/u_app_turn.c
+  src/u_buzzer_turn.c
   src/u_uart_turn.c
   src/u_led_turn.c
   src/u_i2c_turn.c

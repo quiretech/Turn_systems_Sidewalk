@@ -254,7 +254,7 @@ err_return uhf_single_poll()
 // }
 
 //Ranges between 0 to 25
-err_return write_power(uint8_t pow)
+err_return ufh_power_set(uint8_t pow)
 {
     err_return ret = 0;
     static uint8_t send_power[] = {0x0a,0x4e,0x31,0x2c,0x32,0x30,0x0d};

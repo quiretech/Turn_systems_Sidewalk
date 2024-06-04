@@ -30,8 +30,7 @@ static const struct adc_dt_spec adc_channels[] = {
 int u_adc_init(void){
 
     int err = 0;
-	//uint32_t count = 0;
-	
+	//uint32_t count = 0;	
 
 	/* Configure channels individually prior to sampling. */
 	for (size_t i = 0U; i < ARRAY_SIZE(adc_channels); i++) {

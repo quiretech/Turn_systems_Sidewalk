@@ -25,16 +25,39 @@
 //#define RECEIVE_TIMEOUT     2000
 
 typedef struct turn_data{
-    uint8_t header[2];
-    uint8_t data_id[3];
-    uint8_t time[4];
+     uint8_t time[4];
     uint8_t bin_id[6];
     uint8_t event_id;
     char data[13];
+    uint8_t data_id[3];
+    uint8_t header[2];
     uint8_t crc[2];
     uint8_t footer;
 }turn_data_packet;
 
+// typedef struct turn_data{
+//     uint8_t time[4];
+//     uint8_t bin_id[6];
+//     uint8_t event_id;
+//     char data[13];
+// }turn_data_packet;
+
+//Different events stored in packets
+typedef enum
+{
+    NFC_EVE = 1,
+    UHF_EVE,
+    LID_OPEN,
+    LID_CLOSE,
+    BIN_75P,
+    BIN_FULL,
+    BATT_25P,
+    BATT_LOW,
+    LID_JAM,
+    SYS_CHECK,
+    SYS_OFF,
+    SID_MSG_EVE
+}events;
 
 
 

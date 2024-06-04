@@ -19,6 +19,8 @@
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/reboot.h>
 
+#include <u_app_turn.h>
+
 LOG_MODULE_REGISTER(board_events, CONFIG_SIDEWALK_LOG_LEVEL);
 
 
@@ -56,7 +58,7 @@ void button_event_send_hello(app_ctx_t *application_ctx, turn_data_packet *data)
     }
 
     //data->data[0] = "0091EB299763B";
-    strcpy(data->bin_id,"T3JMMV");
+    //strcpy(data->bin_id,"T3JMMV");
     //strcpy(data->data,"123456acbdefg");
     
 
@@ -93,13 +95,69 @@ void button_event_send_hello(app_ctx_t *application_ctx, turn_data_packet *data)
 		return;
 	}
 
+    // NFC_EVE = 1,
+    // UHF_EVE,
+    // LID_OPEN,
+    // LID_CLOSE,
+    // BIN_75P,
+    // BIN_FULL,
+    // BATT_25P,
+    // BATT_LOW,
+    // LID_JAM,
+    // SYS_CHECK,
+    // SYS_OFF,
+    // SID_MSG_EVE
+
+    
+uint16_t size_temp; 
+
+switch (data->event_id){
+    case NFC_EVE:
+        size_temp = 31;
+        break;
+    case UHF_EVE:
+        size_temp = 24;
+        break;
+    case LID_OPEN:
+        size_temp = 11;
+        break;
+    case LID_CLOSE:
+        size_temp = 11;
+        break;
+    case BIN_75P:
+        size_temp = 12;
+        break;
+    case BIN_FULL:
+        size_temp = 12;
+        break;
+    case BATT_25P:
+        size_temp = 12;
+        break;    
+    case BATT_LOW:
+        size_temp = 12;
+        break;
+    case LID_JAM:
+        size_temp = 12;
+        break;
+    case SYS_CHECK:
+        size_temp = 14;
+        break;
+    case SYS_OFF:
+        size_temp = 12;
+        break;
+    case SID_MSG_EVE:
+        size_temp = 31;
+        break;
+    default:
+        size_temp = 25;
+        break;
+    }
 
 
 	//msg = (struct sid_msg){ .data = (uint8_t *)&counter, .size = sizeof(uint8_t) };
-	msg = (struct sid_msg){ .data = data, .size = 32 };
+	msg = (struct sid_msg){ .data = data, .size = size_temp };
 
-
-	desc = (struct sid_msg_desc){
+ 	desc = (struct sid_msg_desc){
 		.type = SID_MSG_TYPE_NOTIFY,
 		.link_type = SID_LINK_TYPE_ANY,
 		.link_mode = SID_LINK_MODE_CLOUD,

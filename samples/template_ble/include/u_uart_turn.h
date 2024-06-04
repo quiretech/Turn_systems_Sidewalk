@@ -24,7 +24,7 @@ err_return u_uart0_get_rx_buf(uint8_t * data_buff, size_t data_len);
 err_return u_uart1_get_rx_buf(uint8_t * data_buff, size_t data_len);
 err_return get_module_info();
 err_return uhf_single_poll();
-err_return write_power(uint8_t pow);
+err_return ufh_power_set(uint8_t pow);
 
 
 #endif //U_UART_TURN_H

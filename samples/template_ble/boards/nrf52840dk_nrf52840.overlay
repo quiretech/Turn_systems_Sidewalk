@@ -195,7 +195,7 @@
 		};
 
         pwm_led1: pwm_led_1 {
-			pwms = <&pwm1 1 PWM_HZ(2000) PWM_POLARITY_NORMAL>;
+			pwms = <&pwm1 1 PWM_HZ(2400) PWM_POLARITY_NORMAL>;
 		};
 	};
 

@@ -60,7 +60,7 @@ uint32_t            i2s_leds_frame_word_size;
 uint16_t            num_leds = NUM_LEDS;
 bool                rgb_w = TYPE_RBGW;
 
-uint8_t pepsi_data_set[180][4] = {  {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{0,0,50,0},{0,0,50,0},{0,0,50,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{50,0,0,0},{50,0,0,0},{50,0,0,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{0,0,50,0},{0,0,50,0},{0,0,50,0}, \
+uint8_t pepsi_data_set[NUM_LEDS][4] = {  {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{0,0,50,0},{0,0,50,0},{0,0,50,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{50,0,0,0},{50,0,0,0},{50,0,0,0},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{0,0,50,0},{0,0,50,0},{0,0,50,0}, \
                                     {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{},{0,0,50,0},{},{},{0,0,0,25},{},{},{},{50,0,0,0},{},{50,0,0,0},{},{},{},{0,0,0,25},{},{0,0,50,0},{},{0,0,50,0}, \
                                     {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{},{0,0,50,0},{},{},{0,0,0,25},{0,0,0,25},{0,0,0,25},{},{50,0,0,0},{50,0,0,0},{50,0,0,0},{},{},{0,0,0,25},{0,0,0,25},{},{0,0,50,0},{0,0,50,0},{0,0,50,0}, \
                                     {0,0,0,0},{},{},{},{},{0,0,0,25},{},{},{},{},{},{},{0,0,0,25},{},{},{},{},{},{0,0,50,0},{},{},{},{},{0,0,0,25},{},{},{},{50,0,0,0},{},{},{},{0,0,0,25},{},{},{},{0,0,50,0}, \
@@ -78,7 +78,7 @@ int u_led_init(void)
     int ret = 0;
 
     if (!device_is_ready(i2s_dev_tx)) {
-		printk("%s is not ready\n", i2s_dev_tx->name);
+		//printk("%s is not ready\n", i2s_dev_tx->name);
 		return -1;
 	}
 
@@ -93,7 +93,7 @@ int u_led_init(void)
 
     ret = i2s_configure(i2s_dev_tx, I2S_DIR_TX, &tx_config);
     if (ret < 0) {
-        printk("Failed i2s_configure(i2s_dev_tx) %i\n", ret);
+        //printk("Failed i2s_configure(i2s_dev_tx) %i\n", ret);
 		return ret;
 	}
 
@@ -181,7 +181,7 @@ void send_i2s_led_data() {
     //ret = i2s_write(i2s_dev_tx, m_i2s_led_buffer_tx, (BLOCK_SIZE));
     ret = i2s_write(i2s_dev_tx, tx_mem_block, (BLOCK_SIZE));
     if (ret < 0) {
-        printk("Failed to write dataddd: %d\n", ret);
+        //printk("Failed to write dataddd: %d\n", ret);
         //break;
     }
     else{
@@ -189,12 +189,12 @@ void send_i2s_led_data() {
     }
     ret = i2s_trigger(i2s_dev_tx, I2S_DIR_TX, I2S_TRIGGER_START);
     if (ret < 0) {
-        printk("Failed to trigger command %d on TX: %d\n", I2S_TRIGGER_START, ret);
+        //printk("Failed to trigger command %d on TX: %d\n", I2S_TRIGGER_START, ret);
         return false;
     }
     ret = i2s_trigger(i2s_dev_tx, I2S_DIR_TX, I2S_TRIGGER_STOP);
     if (ret < 0) {
-        printk("Failed to trigger command %d on TX: %d\n", I2S_TRIGGER_STOP, ret);
+        //printk("Failed to trigger command %d on TX: %d\n", I2S_TRIGGER_STOP, ret);
         return false;
     }
 
@@ -202,6 +202,17 @@ void send_i2s_led_data() {
 
 void turn_leds_on()
 {
+
+    /* code for testing LED board, comments out when not needed*/
+    // for(int pos = 0; pos<NUM_LEDS; pos++)
+    // {
+    //     //set_led_pixel_RGBW(i, pepsi_data_set[i][0], pepsi_data_set[i][1], pepsi_data_set[i][2], pepsi_data_set[i][3]);
+    //     m_led_buffer_tx_rgbw[pos].r = 0;//pepsi_data_set[pos][0];
+    //     m_led_buffer_tx_rgbw[pos].g = 100;//pepsi_data_set[pos][1];
+    //     m_led_buffer_tx_rgbw[pos].b = 0;//pepsi_data_set[pos][2];
+    //     m_led_buffer_tx_rgbw[pos].w = 0;//pepsi_data_set[pos][3];
+    // }
+
     set_i2s_led_data();
     send_i2s_led_data();
 }
@@ -282,7 +293,7 @@ void position_on_range(uint8_t pos1, uint8_t pos2, uint8_t r, uint8_t g, uint8_t
 
 void display_pepsi(void)
 {
-    for(int pos = 0; pos<180; pos++)
+    for(int pos = 0; pos<NUM_LEDS; pos++)
     {
         //set_led_pixel_RGBW(i, pepsi_data_set[i][0], pepsi_data_set[i][1], pepsi_data_set[i][2], pepsi_data_set[i][3]);
         m_led_buffer_tx_rgbw[pos].r = pepsi_data_set[pos][0];
@@ -295,7 +306,7 @@ void display_pepsi(void)
 
 void display_lid_jam(void)
 {
-    for(int pos = 0; pos<180; pos++)
+    for(int pos = 0; pos<NUM_LEDS; pos++)
     {
         //set_led_pixel_RGBW(i, pepsi_data_set[i][0], pepsi_data_set[i][1], pepsi_data_set[i][2], pepsi_data_set[i][3]);
         m_led_buffer_tx_rgbw[pos].r = lid_jam_data_set[pos][0];
@@ -308,7 +319,7 @@ void display_lid_jam(void)
 
 void display_thanks(void)
 {
-    for(int pos = 0; pos<180; pos++)
+    for(int pos = 0; pos<NUM_LEDS; pos++)
     {
         //set_led_pixel_RGBW(i, pepsi_data_set[i][0], pepsi_data_set[i][1], pepsi_data_set[i][2], pepsi_data_set[i][3]);
         m_led_buffer_tx_rgbw[pos].r = thanks_data_set[pos][0];
